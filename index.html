@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>제로영토 ZERO TERRITORY</title>
+<style>
+:root{--pn:rgba(7,13,27,.88);--ln:rgba(110,160,255,.28);--pc:#2f8bff}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#030712;color:#e6edfb;font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;font-size:13px;user-select:none;-webkit-user-select:none}
+#cv{position:fixed;inset:0;width:100%;height:100%;touch-action:none;display:block}
+button{font:inherit;color:inherit;cursor:pointer;border:1px solid var(--ln);background:rgba(24,38,72,.88);border-radius:8px}
+button:active{transform:scale(.96)}
+button:disabled{opacity:.4}
+input{font:inherit}
+.pn{background:var(--pn);border:1px solid var(--ln);border-radius:10px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 6px 24px rgba(0,0,0,.45)}
+#top{position:fixed;left:0;right:0;top:0;height:46px;display:flex;align-items:center;gap:6px;padding:0 8px;background:linear-gradient(#050a16f5,#050a16c0);border-bottom:1px solid var(--ln);z-index:20}
+.logo{font-weight:900;font-style:italic;font-size:19px;line-height:.9;background:linear-gradient(#fff,#ff9090 55%,#ff2d2d);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap;flex:none}
+.logo small{display:block;font-size:7px;letter-spacing:2.6px;-webkit-text-fill-color:#b9c3dc;font-style:normal;font-weight:700;margin-top:2px}
+.chip{display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:8px;background:rgba(18,30,58,.88);border:1px solid var(--ln);white-space:nowrap;font-size:12px;flex:none}
+.chip b{font-size:13px}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:#2bd96b;box-shadow:0 0 6px #2bd96b}
+.me{gap:6px;padding:2px 8px 2px 2px}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid var(--pc);background:#0b1730;flex:none}
+.me .nm{font-weight:800;font-size:12px;line-height:1.1}
+.me .lv{font-size:10px;color:#9fb3d9}
+#sw{position:relative;flex:1;min-width:70px;max-width:280px}
+#search{width:100%;height:30px;border-radius:8px;border:1px solid var(--ln);background:rgba(14,24,46,.92);color:#fff;padding:0 10px 0 28px;outline:none}
+#sw::before{content:"⌕";position:absolute;left:9px;top:5px;color:#8ea6d6;font-size:16px}
+#sres{position:absolute;top:34px;left:0;right:0;display:none;z-index:30;max-height:240px;overflow:auto}
+#sres div{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.06)}
+#sres div:active{background:rgba(60,100,200,.3)}
+.sp{flex:1}
+.ib{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none;padding:0}
+#gold b{color:#ffd75e}
+/* side panels */
+.side{position:fixed;top:54px;bottom:66px;width:250px;z-index:12;display:flex;flex-direction:column;transition:transform .25s}
+#lp{left:8px}#rp{right:8px}
+#lp.off{transform:translateX(calc(-100% - 12px))}
+#rp.off{transform:translateX(calc(100% + 12px))}
+.tog{position:fixed;top:50%;z-index:13;width:20px;height:56px;border-radius:0 8px 8px 0;padding:0;font-size:11px;transition:left .25s,right .25s}
+#lt{left:258px}#rt{right:258px;border-radius:8px 0 0 8px}
+#lp.off~#lt{left:0}
+.tabs{display:flex;gap:2px;padding:4px;flex:none}
+.tabs button{flex:1;padding:6px 0;font-size:12px;border-radius:6px;background:rgba(20,32,62,.6);border-color:transparent}
+.tabs button.on{background:linear-gradient(#2f6fe0,#1c4bb0);border-color:#5d97ff;font-weight:800}
+.body{flex:1;overflow:auto;padding:4px 8px 8px;-webkit-overflow-scrolling:touch}
+.sec{margin:6px 0 4px;font-size:11px;color:#8ea6d6;font-weight:700;letter-spacing:.5px}
+.row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:7px;background:rgba(18,30,58,.6);margin-bottom:4px;border:1px solid transparent}
+.row:active{border-color:var(--ln)}
+.row .dot{width:10px;height:10px;border-radius:3px;flex:none}
+.row .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .v{font-weight:700;font-size:12px;color:#cfe0ff}
+.badge{font-size:10px;padding:2px 6px;border-radius:5px;font-weight:800}
+.b-war{background:#5a1420;color:#ff9aa5}.b-ally{background:#123f2a;color:#7dffb4}
+.kv{display:flex;justify-content:space-between;padding:4px 2px;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px}
+.kv b{color:#fff}
+.btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.btns button{flex:1;padding:8px 4px;font-size:12px;font-weight:700;min-width:80px}
+.red{background:linear-gradient(#e2323a,#9c1218)!important;border-color:#ff6a6a!important}
+.blue{background:linear-gradient(#2f72e6,#173f9e)!important;border-color:#6aa2ff!important}
+.green{background:linear-gradient(#1fa860,#0e6236)!important;border-color:#5be39a!important}
+#selbox{padding:8px;border-bottom:1px solid var(--ln);flex:none}
+#selbox h3{font-size:16px;display:flex;align-items:center;gap:6px}
+#selbox .own{font-size:12px;margin:2px 0 4px}
+.hint{color:#8ea6d6;font-size:12px;line-height:1.5}
+.battle{border-radius:8px;overflow:hidden;border:1px solid #ff4b4b88;margin-bottom:6px}
+.battle .hd{background:linear-gradient(90deg,#9c1218,#e2323a,#9c1218);padding:6px;text-align:center;font-weight:900;font-size:13px}
+.battle .hd.blu{background:linear-gradient(90deg,#173f9e,#2f72e6,#173f9e)}
+.battle .sub{text-align:center;font-size:12px;padding:4px;background:rgba(0,0,0,.35)}
+.vs{display:flex;align-items:center;justify-content:space-between;padding:8px}
+.vs .s{display:flex;align-items:center;gap:6px;font-size:12px;max-width:44%}
+.vs .s.r{flex-direction:row-reverse;text-align:right}
+.vs i{font-style:italic;font-weight:900;font-size:20px;background:linear-gradient(#9cc4ff,#ff6b6b);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bar2{display:flex;height:7px;border-radius:4px;overflow:hidden;margin:0 8px 8px;background:#222}
+.bar2 i{display:block;height:100%}
+/* bottom bar */
+#bar{position:fixed;left:50%;bottom:6px;transform:translateX(-50%);display:flex;gap:5px;padding:5px;z-index:15;align-items:stretch;max-width:calc(100% - 12px)}
+#bar>button{min-width:58px;padding:4px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:700;line-height:1.15;flex:none}
+#bar>button span{font-size:17px}
+#bar>button small{font-size:9.5px;color:#ffd75e;font-weight:600}
+.seg{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 4px}
+.seg .lab{font-size:10px;color:#8ea6d6;text-align:center}
+.seg div{display:flex;gap:2px}
+.seg button{padding:5px 6px;font-size:11px;border-radius:5px;background:rgba(20,32,62,.7)}
+.seg button.on{background:linear-gradient(#e2323a,#9c1218);border-color:#ff7a7a;font-weight:800}
+/* chat */
+#chat{position:fixed;left:8px;bottom:66px;width:min(320px,42vw);z-index:14;transition:left .25s}
+#lp:not(.off)~#chat{left:266px}
+#chat .tabs{padding:3px}
+#clog{height:84px;overflow:auto;padding:2px 8px;font-size:12px;line-height:1.55}
+#chat.min #clog{height:22px;overflow:hidden}
+#chat.min form{display:none}
+#chat form{display:flex;gap:4px;padding:4px}
+#chat input{flex:1;height:28px;border-radius:6px;border:1px solid var(--ln);background:rgba(10,18,36,.9);color:#fff;padding:0 8px;outline:none;min-width:0}
+#chat form button{padding:0 10px}
+#toast{position:fixed;left:50%;top:58px;transform:translateX(-50%);z-index:40;padding:8px 14px;border-radius:8px;background:rgba(10,18,40,.95);border:1px solid #5d97ff;font-weight:700;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+#toast.on{opacity:1}
+/* overlays */
+.ov{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(8,16,40,.86),rgba(2,5,12,.97));padding:12px;overflow:auto}
+.ov.hide{display:none}
+.card{width:min(560px,100%);padding:16px 18px;max-height:100%;overflow:auto}
+.card .logo{font-size:38px;text-align:center}
+.card .logo small{font-size:12px;letter-spacing:6px}
+.card p{color:#b6c4e2;line-height:1.55;font-size:12.5px}
+.opts{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.opts button{padding:6px 10px;font-size:14px}
+.opts button.on{border-color:#fff;box-shadow:0 0 0 2px var(--pc) inset}
+.cs{width:34px;height:30px;padding:0}
+.big{width:100%;padding:12px;font-size:16px;font-weight:900;margin-top:6px}
+.lbl{font-size:11px;color:#8ea6d6;font-weight:700;margin-top:8px}
+#nick{width:100%;height:36px;border-radius:8px;border:1px solid var(--ln);background:#0b1530;color:#fff;padding:0 10px;margin-top:4px;outline:none}
+#loading{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:#030712;font-weight:700}
+#rot{display:none}
+@media (orientation:portrait) and (max-width:700px){#rot:not(.dis){display:flex}}
+@media (max-width:820px){.hide-s{display:none!important}.side{width:220px}#lt{left:228px}#rt{right:228px}.logo{font-size:16px}}
+@media (max-height:430px){.side{top:50px;bottom:60px}#clog{height:54px}#chat{bottom:66px}#bar>button{min-width:50px}#bar{bottom:3px}}
+</style>
+</head>
+<body>
+<style>
+.online{color:#7dffb4}
+.pl-on{width:8px;height:8px;border-radius:50%;background:#2bd96b;display:inline-block;box-shadow:0 0 5px #2bd96b}
+.pl-off{width:8px;height:8px;border-radius:50%;background:#55607a;display:inline-block}
+.req{border:1px solid #ffd75e88;background:rgba(80,64,10,.35)}
+.mode{font-size:10px;padding:2px 6px;border-radius:5px;background:#3a2a08;color:#ffd75e;font-weight:800}
+.mode.net{background:#0e3a24;color:#7dffb4}
+.cols{display:flex;gap:5px;flex-wrap:wrap}
+
+.money{gap:7px;padding:3px 10px 3px 8px;border-color:#ffd75e99;background:linear-gradient(#3d2e07,#1c1503)}
+.money .mi{font-size:20px}.money small{display:block;font-size:9px;color:#d9c27c;line-height:1.1}
+.money b{font-size:16px;color:#ffd75e;line-height:1.1}.money .inc{color:#9fe8a9;font-size:9.5px}
+#bar>button.atk{min-width:74px;background:linear-gradient(#ff3b3b,#a3101a);border-color:#ff9a9a;box-shadow:0 0 12px rgba(255,60,60,.55);font-size:13px}
+#bar>button.atk span{font-size:20px}
+#bar>button.atk.dim{background:linear-gradient(#5a1a1f,#33090d);box-shadow:none;border-color:#7a3b3b}
+#act{position:fixed;left:50%;transform:translateX(-50%);bottom:70px;z-index:16;width:min(430px,94vw);padding:9px 11px}
+#act.hide{display:none}
+#act .ln{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;justify-content:center}
+#act .ln i{font-style:normal;color:#ff8080}
+#act .cmp{display:flex;justify-content:space-between;font-size:12px;margin:6px 2px 2px;color:#cfe0ff}
+#act .cmp b{font-size:14px}
+#act .pr{height:8px;border-radius:4px;background:#2a1018;overflow:hidden;display:flex;margin:4px 0}
+#act .pr i{display:block;height:100%}
+#act .go{display:flex;gap:6px;margin-top:7px}
+#act .go button{flex:1;padding:10px;font-size:15px;font-weight:900}
+#act .go .x{flex:.35}
+#act{padding:7px 9px}#act .ln{font-size:13px;flex-wrap:wrap}#act .ln .st{color:#9fb3d9;font-weight:600;font-size:11px}
+#act .cl{position:absolute;right:6px;top:5px;width:24px;height:24px;padding:0;font-size:12px;border-radius:6px}
+#act .dev{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:6px 0 4px}
+#act .dev button{display:flex;flex-direction:column;align-items:center;padding:5px 2px;line-height:1.15}
+#act .dev .ic{font-size:17px}#act .dev b{font-size:12px}#act .dev small{font-size:9.5px;color:#cfe0ff;white-space:nowrap}
+#act .dev .gold{background:linear-gradient(#7a5a0c,#3d2c05);border-color:#ffd75e}
+#act .go button{padding:8px;font-size:14px}
+.odds{text-align:center;font-size:12px;font-weight:800;margin-top:2px}
+#scene{position:fixed;inset:0;z-index:45;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.72)}
+#scene.hide{display:none}
+.scb{width:min(640px,96vw);max-height:96vh;overflow:hidden;border-radius:14px;border:1px solid #ff6a6a88;background:#0a0f1c;box-shadow:0 0 40px rgba(255,60,60,.35)}
+.sct{text-align:center;font-weight:900;font-size:16px;padding:7px;background:linear-gradient(90deg,#8c0f16,#e2323a,#8c0f16)}
+.sct.blu{background:linear-gradient(90deg,#173f9e,#2f72e6,#173f9e)}
+.scf{position:relative;height:min(170px,34vh);overflow:hidden;background:linear-gradient(#1b2236 0%,#3a2a22 55%,#2b2418 56%,#1a160f 100%)}
+.scf .u{position:absolute;bottom:14%;font-size:clamp(20px,4.4vw,30px);transition:transform .3s}
+.scf .ua{animation:adv 2.4s ease-in-out forwards}.scf .ud{animation:hold 2.4s ease-in-out forwards}
+@keyframes adv{0%{transform:translateX(0)}60%{transform:translateX(70%)}100%{transform:translateX(55%)}}
+@keyframes hold{0%,100%{transform:translateX(0) scaleX(-1)}50%{transform:translateX(-25%) scaleX(-1)}}
+.scf .bm{position:absolute;font-size:clamp(22px,5vw,36px);animation:bm .7s ease-out forwards;pointer-events:none}
+@keyframes bm{0%{transform:scale(.2);opacity:1}70%{opacity:1}100%{transform:scale(1.6);opacity:0}}
+.scf .jet{position:absolute;top:10%;font-size:24px;animation:jet 1.6s linear forwards}
+@keyframes jet{from{left:-10%}to{left:110%}}
+.scf .fl{position:absolute;inset:0;background:#fff;opacity:0;animation:fl .35s ease-out}
+@keyframes fl{0%{opacity:.55}100%{opacity:0}}
+.scv{display:flex;align-items:center;gap:8px;padding:9px 12px}
+.scv .sd{flex:1;min-width:0}.scv .sd.r{text-align:right}
+.scv .nm{font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scv .hb{height:10px;border-radius:5px;background:#222;overflow:hidden;margin:4px 0}
+.scv .hb i{display:block;height:100%;transition:width .2s}
+.scv .sd.r .hb i{margin-left:auto}
+.scv .num{font-weight:900;font-size:15px}
+.scv .vs{font-style:italic;font-weight:900;font-size:22px;background:linear-gradient(#9cc4ff,#ff6b6b);-webkit-background-clip:text;background-clip:text;color:transparent}
+.scr{text-align:center;font-size:clamp(22px,5vw,30px);font-weight:900;padding:4px 0 2px;min-height:40px;opacity:0;transform:scale(.6);transition:all .35s cubic-bezier(.2,1.6,.4,1)}
+.scr.on{opacity:1;transform:scale(1)}
+.scs{text-align:center;font-size:12px;color:#9fb3d9;padding-bottom:9px}
+</style>
+<canvas id="cv"></canvas>
+<div id="loading"><div class="logo" style="font-size:34px">제로영토<small>ZERO TERRITORY</small></div><div id="ldmsg">세계 지도 불러오는 중…</div></div>
+
+<div id="top">
+  <div class="logo">제로영토<small>ZERO TERRITORY · v0.9</small></div>
+  <div class="chip me"><div class="av" id="meAv">🐻</div><div><div class="nm" id="meNm">-</div><div class="lv" id="meLv">Lv.1</div></div></div>
+  <div class="chip live" id="onl"><span class="hide-s">실시간 전장 · </span><b id="onN">1</b>명 접속</div>
+  <div id="sw"><input id="search" placeholder="도시·국가 검색 (예: 경산, 일본)" autocomplete="off"><div id="sres" class="pn"></div></div>
+  <div class="chip money" id="gold"><span class="mi">💰</span><div><small>보유 자금</small><b>₩<span id="money">0</span></b><small class="inc" id="inc">+₩0/초</small></div></div>
+  <div class="chip hide-s" id="pow">⚔️<b id="troopsAll">0</b></div>
+  <div class="chip hide-s">🕒<b id="clock">--:--</b></div>
+</div>
+
+<div id="lp" class="side pn">
+  <div class="tabs"><button class="on" data-lt="mine">내 영토</button><button data-lt="rank">랭킹</button></div>
+  <div class="body" id="lbody"></div>
+</div>
+<button class="tog" id="lt">◀</button>
+
+<div id="rp" class="side pn">
+  <div id="selbox"></div>
+  <div class="tabs"><button class="on" data-rt="battle">전투 정보</button><button data-rt="dip">외교</button><button data-rt="me">플레이어</button></div>
+  <div class="body" id="rbody"></div>
+</div>
+<button class="tog" id="rt">▶</button>
+
+<div id="chat" class="pn">
+  <div class="tabs"><button class="on" data-ch="all">전체</button><button data-ch="ally">동맹</button><button data-ch="sys">전투</button><button id="chMin" style="flex:.5">▾</button></div>
+  <div id="clog"></div>
+  <form id="cform"><input id="cin" placeholder="메시지를 입력하세요…" maxlength="80"><button>➤</button></form>
+</div>
+
+<div id="bar" class="pn">
+  <div class="seg"><div class="lab">파견 병력</div><div><button data-r=".25">25%</button><button data-r=".5">50%</button><button class="on" data-r=".75">75%</button><button data-r="1">100%</button></div></div>
+  <button id="bAtk" class="atk dim"><span>⚔️</span>공격</button>
+  <button id="bRecruit"><span>🪖</span>징병<small>₩2,000</small></button>
+  <button id="bFort"><span>🏰</span>요새화<small>₩3,000</small></button>
+  <button id="bDip"><span>🤝</span>외교</button>
+  <button id="bKorea"><span>🇰🇷</span>한국</button>
+  <button id="bWorld"><span>🌐</span>세계</button>
+  <button id="bHome"><span>🎯</span>내 수도</button>
+</div>
+<div id="act" class="pn hide"></div>
+<div id="scene" class="hide"><div class="scb"><div class="sct" id="scT">전투</div><div class="scf" id="scF"></div>
+<div class="scv"><div class="sd"><div class="nm" id="scAN"></div><div class="hb"><i id="scAB"></i></div><div class="num" id="scAV"></div></div><div class="vs">VS</div><div class="sd r"><div class="nm" id="scDN"></div><div class="hb"><i id="scDB"></i></div><div class="num" id="scDV"></div></div></div>
+<div class="scr" id="scR"></div><div class="scs" id="scS">화면을 탭하면 닫혀요</div></div></div>
+<div id="toast"></div>
+
+<div id="start" class="ov hide">
+  <div class="card pn">
+    <div class="logo">제로영토<small>ZERO TERRITORY</small></div>
+    <p style="text-align:center;margin:6px 0 4px">실제 지도 위에서 다른 플레이어들과 겨루는 실시간 영토 전쟁 <span id="modeB" class="mode">연결 확인 중</span></p>
+    <div class="lbl">닉네임</div>
+    <input id="nick" maxlength="8" value="">
+    <div class="lbl">프로필</div>
+    <div class="opts" id="optAv"></div>
+    <div class="lbl">세력 색상</div>
+    <div class="opts cols" id="optCol"></div>
+    <p>▸ 세계 어디든 주인 없는 지역 하나에서 시작해요. 대한민국은 시·군·구 단위, 해외는 국가 단위예요.<br>▸ 내 영토 탭 → 공격할 이웃 지역 탭 → 빨간 <b>⚔ 공격</b> 버튼을 누르면 부대가 출발해요.<br>▸ 세계는 계속 돌아가요. 내가 접속하지 않아도 병력은 쌓이고, 다른 플레이어가 공격해 올 수 있어요.<br>▸ 바다 건너 점선은 해상 항로예요. 해상전은 느리고 전투력이 15% 깎여요.<br>▸ 외교 탭에서 다른 플레이어와 동맹을 맺고 영토를 사고팔 수 있어요.</p>
+    <button class="big red" id="goPick">📍 시작할 곳 고르기</button>
+  </div>
+</div>
+<div id="rot" class="ov"><div class="card pn" style="text-align:center"><div style="font-size:46px">📱↻</div><p style="margin:10px 0;font-size:15px;color:#fff">가로모드로 돌려주세요</p><p>제로영토는 가로 화면에 맞춰 만들어졌어요.</p><button class="big" onclick="document.getElementById('rot').classList.add('dis')">그냥 세로로 하기</button></div></div>
+
+<script>
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const cv=$('#cv'),ctx=cv.getContext('2d');
+let VW=0,VH=0,DPR=1;
+const fmt=n=>Math.floor(Math.max(0,n)).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeKey=s=>String(s).replace(/[^A-Za-z0-9_\-.~:@+]/g,'_').slice(0,120)||'x';
+
+/* ===== projection ===== */
+const WW=2048,K=WW/(2*Math.PI),D2R=Math.PI/180;
+const YMAX=Math.log(Math.tan(Math.PI/4+83*D2R/2)),YMIN=Math.log(Math.tan(Math.PI/4-60*D2R/2));
+const WH=(YMAX-YMIN)*K;
+function proj(lon,lat){lat=clamp(lat,-60,83);return[(lon+180)/360*WW,(YMAX-Math.log(Math.tan(Math.PI/4+lat*D2R/2)))*K]}
+function unproj(x,y){const m=YMAX-y/K;return[x/WW*360-180,(2*Math.atan(Math.exp(m))-Math.PI/2)/D2R]}
+function hsh(x,y){let h=Math.imul(x|0,374761393)+Math.imul(y|0,668265263)|0;h=Math.imul(h^(h>>>13),1274126177);h^=h>>>16;return(h>>>0)/4294967296}
+function vn(x,y){const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf);const a=hsh(xi,yi),b=hsh(xi+1,yi),c=hsh(xi,yi+1),d=hsh(xi+1,yi+1);return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v}
+function fbm(x,y,o){let s=0,a=.5,f=1;for(let i=0;i<o;i++){s+=a*vn(x*f,y*f);f*=2.03;a*=.5}return s/(1-Math.pow(.5,o))}
+
+/* ===== map data loading ===== */
+const AMC='@amcharts/amcharts4-geodata@4';
+function loadScript(url){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=url;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+async function loadAm(name){
+ const tries=[['g','https://cdn.jsdelivr.net/npm/'+AMC+'/dist/script/'+name+'.js'],['m','https://cdn.jsdelivr.net/npm/'+AMC+'/'+name+'.js'],['g','https://unpkg.com/'+AMC+'/dist/script/'+name+'.js']];
+ for(const [t,u] of tries){try{let g;if(t==='g'){await loadScript(u);g=window['am4geodata_'+name]}else{const m=await import(u);g=m.default||m}if(g&&g.features&&g.features.length)return g}catch(e){console.warn('fail',u)}}
+ return null}
+function decodeEC(json){if(!json.UTF8Encoding)return json;const sc=json.UTF8Scale||1024;
+ const dp=(c,off)=>{const r=[];let px=off[0],py=off[1];for(let i=0;i<c.length;i+=2){let x=c.charCodeAt(i)-64,y=c.charCodeAt(i+1)-64;x=(x>>1)^(-(x&1));y=(y>>1)^(-(y&1));x+=px;y+=py;px=x;py=y;r.push([x/sc,y/sc])}return r};
+ for(const f of json.features){const g=f.geometry,cs=g.coordinates,eo=g.encodeOffsets;if(g.type==='Polygon')for(let i=0;i<cs.length;i++)cs[i]=dp(cs[i],eo[i]);else if(g.type==='MultiPolygon')for(let i=0;i<cs.length;i++)for(let j=0;j<cs[i].length;j++)cs[i][j]=dp(cs[i][j],eo[i][j])}return json}
+async function loadWorld(){let g=await loadAm('worldLow');if(g)return g;
+ for(const u of['https://cdn.jsdelivr.net/npm/echarts@4.9.0/map/js/world.js','https://unpkg.com/echarts@4.9.0/map/js/world.js']){try{g=await new Promise((res,rej)=>{window.echarts={registerMap:(n,j)=>res(j)};loadScript(u).then(()=>setTimeout(()=>rej('noreg'),500),rej)});return decodeEC(g)}catch(e){}}
+ throw new Error('nodata')}
+
+/* ===== geometry helpers ===== */
+function ringArea(p){let a=0;for(let i=0,j=p.length-1;i<p.length;j=i++)a+=(p[j][0]+p[i][0])*(p[j][1]-p[i][1]);return a/2}
+function pip(x,y,p){let c=false;for(let i=0,j=p.length-1;i<p.length;j=i++){const xi=p[i][0],yi=p[i][1],xj=p[j][0],yj=p[j][1];if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))c=!c}return c}
+function shape(geo,minStep){const polys=geo.type==='Polygon'?[geo.coordinates]:geo.type==='MultiPolygon'?geo.coordinates:[];
+ const outers=[],path=new Path2D();let area=0,bb=[1e9,1e9,-1e9,-1e9];
+ for(const poly of polys)for(let ri=0;ri<poly.length;ri++){const out=[];let lx=-1e9,ly=-1e9;
+  for(const c of poly[ri]){const p=proj(c[0],c[1]);if(Math.abs(p[0]-lx)+Math.abs(p[1]-ly)>minStep){out.push(p);lx=p[0];ly=p[1]}}
+  if(out.length<3)continue;const a=Math.abs(ringArea(out));
+  path.moveTo(out[0][0],out[0][1]);for(let k=1;k<out.length;k++)path.lineTo(out[k][0],out[k][1]);path.closePath();
+  if(ri===0){outers.push({p:out,a});area+=a;for(const q of out){bb[0]=Math.min(bb[0],q[0]);bb[1]=Math.min(bb[1],q[1]);bb[2]=Math.max(bb[2],q[0]);bb[3]=Math.max(bb[3],q[1])}}else area-=a}
+ outers.sort((a,b)=>b.a-a.a);return{outers,path,area:Math.max(area,.05),bb}}
+
+/* ===== Korean cities (seed points) ===== */
+// name, lat, lon, tier(3 대도시/구, 2 시, 1 군), metro prefix
+const KC=[
+['종로구',37.573,126.979,3,'서울'],['강북구',37.640,127.025,3,'서울'],['마포구',37.566,126.901,3,'서울'],['강서구',37.551,126.849,3,'서울'],['영등포구',37.516,126.907,3,'서울'],['관악구',37.478,126.951,3,'서울'],['강남구',37.497,127.040,3,'서울'],['송파구',37.512,127.110,3,'서울'],['광진구',37.548,127.077,3,'서울'],['노원구',37.654,127.066,3,'서울'],
+['해운대구',35.168,129.160,3,'부산'],['부산진구',35.163,129.053,3,'부산'],['사하구',35.104,128.974,3,'부산'],['금정구',35.243,129.092,3,'부산'],['기장군',35.244,129.222,2,'부산'],['사상구',35.153,128.991,3,'부산'],['영도구',35.091,129.068,2,'부산'],
+['수성구',35.858,128.631,3,'대구'],['달서구',35.830,128.533,3,'대구'],['달성군',35.775,128.431,2,'대구'],['대구 북구',35.886,128.583,3,'대구'],['군위군',36.243,128.573,1,'대구'],
+['남동구',37.447,126.731,3,'인천'],['부평구',37.507,126.722,3,'인천'],['연수구',37.410,126.678,3,'인천'],['인천 서구',37.545,126.676,3,'인천'],['강화군',37.747,126.488,1,'인천'],
+['광산구',35.140,126.794,3,'광주'],['광주 북구',35.174,126.912,3,'광주'],['광주 남구',35.133,126.902,2,'광주'],
+['유성구',36.362,127.356,3,'대전'],['대전 중구',36.325,127.421,3,'대전'],['대덕구',36.387,127.415,2,'대전'],
+['울산 남구',35.544,129.330,3,'울산'],['울주군',35.562,129.125,2,'울산'],['울산 북구',35.633,129.361,2,'울산'],
+['세종시',36.480,127.289,2,'세종'],
+['수원시',37.263,127.029,3],['성남시',37.420,127.127,3],['용인시',37.241,127.178,3],['고양시',37.658,126.832,3],['부천시',37.504,126.766,3],['안산시',37.322,126.831,3],['화성시',37.200,126.831,3],['남양주시',37.636,127.216,2],['안양시',37.394,126.957,3],['평택시',36.992,127.113,2],['의정부시',37.738,127.034,2],['파주시',37.760,126.780,2],['김포시',37.615,126.716,2],['경기 광주시',37.429,127.255,2],['시흥시',37.380,126.803,2],['하남시',37.539,127.215,2],['이천시',37.272,127.435,2],['양평군',37.492,127.488,1],['포천시',37.895,127.200,2],['연천군',38.096,127.075,1],['가평군',37.831,127.510,1],['여주시',37.298,127.637,2],['안성시',37.008,127.280,2],
+['춘천시',37.881,127.730,2],['원주시',37.342,127.920,2],['강릉시',37.752,128.876,2],['속초시',38.207,128.592,2],['동해시',37.525,129.114,2],['삼척시',37.450,129.165,2],['태백시',37.164,128.986,2],['홍천군',37.697,127.889,1],['철원군',38.147,127.313,1],['평창군',37.371,128.390,1],['영월군',37.184,128.462,1],['인제군',38.070,128.170,1],['강원 고성군',38.381,128.468,1],['정선군',37.381,128.661,1],['양구군',38.110,127.990,1],
+['청주시',36.642,127.489,3],['충주시',36.991,127.926,2],['제천시',37.133,128.191,2],['음성군',36.940,127.690,1],['옥천군',36.306,127.571,1],['영동군',36.175,127.776,1],['괴산군',36.815,127.787,1],['단양군',36.985,128.366,1],['진천군',36.855,127.436,1],
+['천안시',36.815,127.114,3],['아산시',36.790,127.002,2],['서산시',36.785,126.450,2],['당진시',36.890,126.628,2],['공주시',36.447,127.119,2],['논산시',36.187,127.099,2],['보령시',36.333,126.613,2],['홍성군',36.601,126.661,1],['태안군',36.746,126.298,1],['부여군',36.276,126.910,1],['금산군',36.109,127.488,1],['예산군',36.682,126.845,1],
+['전주시',35.824,127.148,3],['익산시',35.948,126.958,2],['군산시',35.968,126.737,2],['정읍시',35.570,126.856,2],['남원시',35.416,127.390,2],['김제시',35.804,126.881,2],['무주군',36.007,127.661,1],['고창군',35.436,126.702,1],['진안군',35.792,127.425,1],['임실군',35.618,127.289,1],['부안군',35.732,126.733,1],
+['목포시',34.812,126.392,2],['여수시',34.760,127.662,2],['순천시',34.951,127.487,2],['광양시',34.941,127.696,2],['나주시',35.016,126.711,2],['해남군',34.573,126.599,1],['영광군',35.277,126.512,1],['담양군',35.321,126.988,1],['고흥군',34.611,127.285,1],['완도군',34.311,126.755,1],['화순군',35.065,126.987,1],['강진군',34.642,126.767,1],['무안군',34.990,126.482,1],['보성군',34.772,127.080,1],['신안군',34.833,126.100,1],['구례군',35.202,127.463,1],
+['포항시',36.019,129.343,3],['경주시',35.856,129.225,2],['구미시',36.120,128.344,2],['안동시',36.568,128.730,2],['경산시',35.825,128.741,2],['영천시',35.973,128.939,2],['김천시',36.140,128.114,2],['상주시',36.411,128.159,2],['영주시',36.806,128.624,2],['문경시',36.587,128.187,2],['칠곡군',35.996,128.402,1],['울진군',36.993,129.401,1],['영덕군',36.415,129.366,1],['의성군',36.353,128.697,1],['청도군',35.647,128.734,1],['고령군',35.726,128.263,1],['봉화군',36.893,128.733,1],['청송군',36.436,129.057,1],['성주군',35.919,128.283,1],['예천군',36.658,128.453,1],['울릉군',37.484,130.906,1],
+['창원시',35.228,128.681,3],['김해시',35.229,128.889,2],['진주시',35.180,128.108,2],['양산시',35.335,129.037,2],['거제시',34.880,128.621,2],['통영시',34.854,128.433,2],['사천시',35.004,128.064,2],['밀양시',35.504,128.746,2],['함안군',35.272,128.406,1],['거창군',35.687,127.910,1],['합천군',35.567,128.166,1],['하동군',35.067,127.751,1],['남해군',34.838,127.893,1],['경남 고성군',34.973,128.323,1],['산청군',35.416,127.873,1],['창녕군',35.544,128.492,1],['함양군',35.520,127.725,1],
+['제주시',33.500,126.531,2],['서귀포시',33.254,126.560,2]];
+
+/* ===== regions ===== */
+const REG=[];let NK=0,NR=0,landPath=null,landNoKR=null,krInfo=null,provPaths=[];
+const KO=(()=>{try{return new Intl.DisplayNames(['ko'],{type:'region'})}catch(e){return null}})();
+function koName(id,en){if(KO&&/^[A-Z]{2}$/.test(id)){try{return KO.of(id)||en}catch(e){}}return en}
+let RS=26,KX0=0,KY0=0,KGW=0,KGH=0,kid=null,kprov=null,kdist=null,kpb=null,krCanvas=null,krCtx=null,krImg=null;
+async function buildWorld(world,korea){
+ landPath=new Path2D();landNoKR=new Path2D();const countries=[];let krShape=null;
+ for(const f of world.features){const geo=f.geometry;if(!geo)continue;const pr=f.properties||{};
+  const id=String(f.id||pr.id||pr.iso_a2||'');const en=pr.name||id;if(id==='AQ'||/antarc/i.test(en))continue;
+  const sh=shape(geo,.7);if(!sh.outers.length)continue;landPath.addPath(sh.path);
+  if(id==='KR'||en==='Korea'||en==='South Korea'){krShape=sh;continue}landNoKR.addPath(sh.path);
+  countries.push({id,en,sh})}
+ // --- Korea raster ---
+ let provs=[];
+ if(korea){for(const f of korea.features){if(!f.geometry)continue;const sh=shape(f.geometry,.02);if(sh.outers.length)provs.push({name:provKo(((f.properties&&f.properties.name)||'')+' '+(f.id||(f.properties&&f.properties.id)||'')),sh})}}
+ if(!provs.length&&krShape)provs=[{name:'대한민국',sh:krShape}];
+ if(provs.length){provPaths=provs.map(p=>p.sh.path);buildKorea(provs)}
+ // --- countries ---
+ for(const c of countries){const sh=c.sh,r=sh.outers[0].p;
+  const lp=labelPoint(r);const all=[];for(const o of sh.outers)for(const q of o.p)all.push(q);const st=Math.max(1,Math.floor(all.length/220));const sp=[];for(let k=0;k<all.length;k+=st)sp.push(all[k]);
+  REG.push({key:'C_'+safeKey(c.id||c.en),name:koName(c.id,c.en),full:koName(c.id,c.en),en:c.en,iso:c.id,kind:'c',path:sh.path,bb:sh.bb,area:sh.area,lx:lp[0],ly:lp[1],w:sh.bb[2]-sh.bb[0],sp,
+   prod:clamp(2+Math.sqrt(sh.area)*.075,2,36),base:Math.round(clamp(300+Math.sqrt(sh.area)*24,300,8000)),adj:[],sea:new Set()})}
+ NR=REG.length;buildAdj();
+}
+const PROVKO=[[/seoul|KR-11/i,'서울특별시'],[/busan|pusan|KR-26/i,'부산광역시'],[/daegu|taegu|KR-27/i,'대구광역시'],[/incheon|inchon|KR-28/i,'인천광역시'],[/gwangju|kwangju|KR-29/i,'광주광역시'],[/daejeon|taejon|KR-30/i,'대전광역시'],[/ulsan|KR-31/i,'울산광역시'],[/sejong|KR-50/i,'세종특별자치시'],[/gyeonggi|kyonggi|KR-41/i,'경기도'],[/gangwon|kangwon|KR-42|KR-51/i,'강원특별자치도'],[/(north|buk).*chung|chung.*(north|buk)|KR-43/i,'충청북도'],[/(south|nam).*chung|chung.*(south|nam)|KR-44/i,'충청남도'],[/(north|buk).*jeol|jeol.*(north|buk)|chollabuk|KR-45|KR-52/i,'전북특별자치도'],[/(south|nam).*jeol|jeol.*(south|nam)|chollanam|KR-46/i,'전라남도'],[/(north|buk).*gyeong|gyeong.*(north|buk)|kyongsangbuk|KR-47/i,'경상북도'],[/(south|nam).*gyeong|gyeong.*(south|nam)|kyongsangnam|KR-48/i,'경상남도'],[/jeju|cheju|KR-49/i,'제주특별자치도']];
+function provKo(s){for(const [re,k] of PROVKO)if(re.test(s))return k;return s||'대한민국'}
+function labelPoint(r){let bx=0,by=0;for(const q of r){bx+=q[0];by+=q[1]}bx/=r.length;by/=r.length;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const q of r){x0=Math.min(x0,q[0]);x1=Math.max(x1,q[0]);y0=Math.min(y0,q[1]);y1=Math.max(y1,q[1])}
+ let best=-1e18,lx=bx,ly=by;const st=Math.max(1,Math.ceil(r.length/120));
+ for(let i=1;i<12;i++)for(let j=1;j<12;j++){const x=x0+(x1-x0)*i/12,y=y0+(y1-y0)*j/12;if(!pip(x,y,r))continue;let md=1e9;for(let k=0;k<r.length;k+=st){const d=(r[k][0]-x)**2+(r[k][1]-y)**2;if(d<md)md=d}const sc=md-((x-bx)**2+(y-by)**2)*.02;if(sc>best){best=sc;lx=x;ly=y}}
+ return[lx,ly]}
+function vectorize(ids,W,H,n){const VW=W+1,E=Array.from({length:n},()=>new Map()),out=Array.from({length:n},()=>[]);
+ const add=(r,a,b)=>{const m=E[r];let l=m.get(a);if(!l){l=[];m.set(a,l)}l.push(b)};
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){const i=y*W+x,r=ids[i];if(r<0)continue;
+  const up=y>0?ids[i-W]:-1,dn=y<H-1?ids[i+W]:-1,lf=x>0?ids[i-1]:-1,rt=x<W-1?ids[i+1]:-1;const v00=y*VW+x,v10=v00+1,v01=v00+VW,v11=v01+1;
+  if(up!==r)add(r,v00,v10);if(rt!==r)add(r,v10,v11);if(dn!==r)add(r,v11,v01);if(lf!==r)add(r,v01,v00)}
+ for(let r=0;r<n;r++){const m=E[r];while(m.size){const start=m.keys().next().value;let cur=start,prev=-1;const loop=[];let g=0;
+  while(g++<2e6){const l=m.get(cur);if(!l||!l.length)break;let k=0;
+   if(l.length>1&&prev>=0){const dx=cur%VW-prev%VW,dy=((cur/VW)|0)-((prev/VW)|0);let bs=-1;l.forEach((nx,j)=>{const ex=nx%VW-cur%VW,ey=((nx/VW)|0)-((cur/VW)|0);const sc=(ex===-dy&&ey===dx)?2:(ex===dx&&ey===dy)?1:0;if(sc>bs){bs=sc;k=j}})}
+   const nx=l[k];l.splice(k,1);if(!l.length)m.delete(cur);loop.push(cur);prev=cur;cur=nx;if(cur===start)break}
+  if(loop.length>=4)out[r].push(loop.map(v=>[v%VW,(v/VW)|0]))}}
+ return out}
+function smoothLoop(L){let p=[];for(let i=0;i<L.length;i++){const a=L[(i-1+L.length)%L.length],b=L[i],c=L[(i+1)%L.length];if((b[0]-a[0])*(c[1]-b[1])!==(b[1]-a[1])*(c[0]-b[0]))p.push(b)}
+ if(p.length<3)p=L.slice();
+ for(let it=0;it<2;it++){const q=[];for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];q.push([a[0]*.75+b[0]*.25,a[1]*.75+b[1]*.25],[a[0]*.25+b[0]*.75,a[1]*.25+b[1]*.75])}p=q}
+ const o=[p[0]];for(let i=1;i<p.length;i++){const l=o[o.length-1],c=p[i],nx=p[(i+1)%p.length];const d=Math.hypot(c[0]-l[0],c[1]-l[1]);
+  const cr=Math.abs((c[0]-l[0])*(nx[1]-c[1])-(c[1]-l[1])*(nx[0]-c[0]));if(d>3.5||cr>.35*d)o.push(c)}return o}
+function loopsToPath(loops,minLen){const P=new Path2D();for(const L of loops){if(L.length<(minLen||4))continue;const q=smoothLoop(L);if(q.length<3)continue;
+ P.moveTo(KX0+q[0][0]/RS,KY0+q[0][1]/RS);for(let k=1;k<q.length;k++)P.lineTo(KX0+q[k][0]/RS,KY0+q[k][1]/RS);P.closePath()}return P}
+let provVP=[];
+function buildKorea(provs){
+ let bb=[1e9,1e9,-1e9,-1e9];for(const p of provs){const b=p.sh.bb;bb=[Math.min(bb[0],b[0]),Math.min(bb[1],b[1]),Math.max(bb[2],b[2]),Math.max(bb[3],b[3])]}
+ KX0=bb[0]-.5;KY0=bb[1]-.5;KGW=Math.ceil((bb[2]-bb[0]+1)*RS);KGH=Math.ceil((bb[3]-bb[1]+1)*RS);const N=KGW*KGH;
+ kprov=new Int16Array(N).fill(-1);
+ const tc=document.createElement('canvas');tc.width=KGW;tc.height=KGH;const tg=tc.getContext('2d',{willReadFrequently:true});
+ provs.forEach((p,pi)=>{tg.setTransform(1,0,0,1,0,0);tg.clearRect(0,0,KGW,KGH);tg.setTransform(RS,0,0,RS,-KX0*RS,-KY0*RS);tg.fillStyle='#fff';tg.fill(p.sh.path,'evenodd');
+  const d=tg.getImageData(0,0,KGW,KGH).data;for(let i=0;i<N;i++)if(d[i*4+3]>=110&&kprov[i]<0)kprov[i]=pi});
+ // seeds
+ const seeds=KC.map((c,ci)=>{const p=proj(c[2],c[1]);return{ci,x:p[0],y:p[1],gx:Math.floor((p[0]-KX0)*RS),gy:Math.floor((p[1]-KY0)*RS),prov:-1}});
+ for(const s of seeds){let pv=-1;for(let r=0;r<12&&pv<0;r+=2)for(let dy=-r;dy<=r&&pv<0;dy+=Math.max(1,r))for(let dx=-r;dx<=r&&pv<0;dx++){const x=s.gx+dx,y=s.gy+dy;if(x>=0&&y>=0&&x<KGW&&y<KGH&&kprov[y*KGW+x]>=0)pv=kprov[y*KGW+x]}s.prov=pv}
+ const valid=seeds.filter(s=>s.prov>=0);const byProv=provs.map(()=>[]);for(const s of valid)byProv[s.prov].push(s);
+ // provinces without seeds become a region themselves
+ const extra=[];provs.forEach((p,pi)=>{if(!byProv[pi].length){const lp=labelPoint(p.sh.outers[0].p);const s={ci:-1,x:lp[0],y:lp[1],prov:pi,pname:p.name};byProv[pi].push(s);extra.push(s)}});
+ const all=[...valid,...extra];all.forEach((s,k)=>s.rid=k);NK=all.length;
+ kid=new Int16Array(N).fill(-1);
+ for(let gy=0;gy<KGH;gy++)for(let gx=0;gx<KGW;gx++){const i=gy*KGW+gx,pv=kprov[i];if(pv<0)continue;const L=byProv[pv];
+  const x=KX0+(gx+.5)/RS,y=KY0+(gy+.5)/RS;const wx=x+(fbm(x*.5+3,y*.5,2)-.5)*1.1,wy=y+(fbm(x*.5,y*.5+7,2)-.5)*1.1;
+  let b=-1,bd=1e18;for(const s of L){const d=(s.x-wx)**2+(s.y-wy)**2;if(d<bd){bd=d;b=s.rid}}kid[i]=b}
+ // remove stray fragments: keep each region's largest piece, give other pieces to the surrounding region (same province)
+ {const comp=new Int32Array(N).fill(-1),q=new Int32Array(N),best=new Map(),csz=[],creg=[];let cid=0;
+  for(let i=0;i<N;i++){if(kid[i]<0||comp[i]>=0)continue;const r=kid[i];let h=0,t=0;q[t++]=i;comp[i]=cid;
+   while(h<t){const pp=q[h++],x=pp%KGW,y=(pp/KGW)|0;
+    if(x>0&&comp[pp-1]<0&&kid[pp-1]===r){comp[pp-1]=cid;q[t++]=pp-1}if(x<KGW-1&&comp[pp+1]<0&&kid[pp+1]===r){comp[pp+1]=cid;q[t++]=pp+1}
+    if(y>0&&comp[pp-KGW]<0&&kid[pp-KGW]===r){comp[pp-KGW]=cid;q[t++]=pp-KGW}if(y<KGH-1&&comp[pp+KGW]<0&&kid[pp+KGW]===r){comp[pp+KGW]=cid;q[t++]=pp+KGW}}
+   csz[cid]=t;creg[cid]=r;if(!best.has(r)||csz[best.get(r)]<t)best.set(r,cid);cid++}
+  const nb=new Map();
+  for(let i=0;i<N;i++){const c=comp[i];if(c<0||best.get(creg[c])===c)continue;const x=i%KGW,y=(i/KGW)|0;
+   for(const n of [x>0?i-1:-1,x<KGW-1?i+1:-1,y>0?i-KGW:-1,y<KGH-1?i+KGW:-1]){if(n<0)continue;const o=kid[n];if(o<0||o===creg[c]||kprov[n]!==kprov[i])continue;let m=nb.get(c);if(!m)nb.set(c,m=new Map());m.set(o,(m.get(o)||0)+1)}}
+  const re=new Map();for(const [c,m] of nb){let bo=-1,bv=0;for(const [o,v] of m)if(v>bv){bv=v;bo=o}if(bo>=0)re.set(c,bo)}
+  for(let i=0;i<N;i++){const c=comp[i];if(c>=0&&re.has(c))kid[i]=re.get(c)}}
+ // distance to border (chamfer) + province border flag
+ kdist=new Float32Array(N);kpb=new Uint8Array(N);
+ for(let gy=0;gy<KGH;gy++)for(let gx=0;gx<KGW;gx++){const i=gy*KGW+gx,id=kid[i];if(id<0){kdist[i]=0;continue}
+  let bd=false,pb=false;const ns=[gx>0?i-1:-1,gx<KGW-1?i+1:-1,gy>0?i-KGW:-1,gy<KGH-1?i+KGW:-1];
+  for(const n of ns){if(n<0||kid[n]!==id){bd=true;if(n<0||kprov[n]!==kprov[i])pb=true}}kdist[i]=bd?0:1e9;kpb[i]=pb?1:0}
+ for(let gy=0;gy<KGH;gy++)for(let gx=0;gx<KGW;gx++){const i=gy*KGW+gx;let d=kdist[i];if(d===0)continue;if(gx>0)d=Math.min(d,kdist[i-1]+1);if(gy>0){d=Math.min(d,kdist[i-KGW]+1);if(gx>0)d=Math.min(d,kdist[i-KGW-1]+1.41);if(gx<KGW-1)d=Math.min(d,kdist[i-KGW+1]+1.41)}kdist[i]=d}
+ for(let gy=KGH-1;gy>=0;gy--)for(let gx=KGW-1;gx>=0;gx--){const i=gy*KGW+gx;let d=kdist[i];if(d===0)continue;if(gx<KGW-1)d=Math.min(d,kdist[i+1]+1);if(gy<KGH-1){d=Math.min(d,kdist[i+KGW]+1);if(gx<KGW-1)d=Math.min(d,kdist[i+KGW+1]+1.41);if(gx>0)d=Math.min(d,kdist[i+KGW-1]+1.41)}kdist[i]=d}
+ // per region stats
+ const st=all.map(()=>({n:0,x0:1e9,y0:1e9,x1:-1e9,y1:-1e9,bd:-1,bx:0,by:0,coast:[]}));const pairs=new Map();
+ for(let gy=0;gy<KGH;gy++)for(let gx=0;gx<KGW;gx++){const i=gy*KGW+gx,id=kid[i];if(id<0)continue;const s=st[id];s.n++;
+  if(gx<s.x0)s.x0=gx;if(gx>s.x1)s.x1=gx;if(gy<s.y0)s.y0=gy;if(gy>s.y1)s.y1=gy;if(kdist[i]>s.bd){s.bd=kdist[i];s.bx=gx;s.by=gy}
+  if(gx<KGW-1){const j=kid[i+1];if(j>=0&&j!==id){const k=Math.min(id,j)+'_'+Math.max(id,j);pairs.set(k,(pairs.get(k)||0)+1)}else if(j<0&&(gx+gy)%3===0)s.coast.push([gx,gy])}
+  if(gy<KGH-1){const j=kid[i+KGW];if(j>=0&&j!==id){const k=Math.min(id,j)+'_'+Math.max(id,j);pairs.set(k,(pairs.get(k)||0)+1)}else if(j<0&&(gx+gy)%3===0)s.coast.push([gx,gy])}}
+ all.forEach((s,k)=>{const c=s.ci>=0?KC[s.ci]:null,S=st[k];const tier=c?c[3]:2;
+  const name=c?c[0]:(s.pname||'지역');const full=c?(c[4]?(c[4]==='세종'?'세종특별자치시':c[4]+(c[4]==='서울'?'특별시 ':'광역시 ')+name.replace(/^\S+ /,'')):(provs[s.prov].name+' '+name)):name;
+  const coast=S.coast.length?S.coast:[[S.bx,S.by]];const step=Math.max(1,Math.floor(coast.length/80));const sp=[];for(let q=0;q<coast.length;q+=step)sp.push([KX0+(coast[q][0]+.5)/RS,KY0+(coast[q][1]+.5)/RS]);
+  REG.push({key:'K_'+(c?s.ci:'p'+s.prov),name,full,kind:'k',tier,empty:S.n<4,ux:s.x,uy:s.y,prov:s.prov,pname:provs[s.prov].name,lx:KX0+(S.bx+.5)/RS,ly:KY0+(S.by+.5)/RS,
+   bb:[KX0+S.x0/RS,KY0+S.y0/RS,KX0+(S.x1+1)/RS,KY0+(S.y1+1)/RS],w:(S.x1-S.x0+1)/RS,sp,area:S.n/(RS*RS),
+   prod:tier===3?5:tier===2?3.5:2.5,base:tier===3?1000:tier===2?700:400,adj:[],sea:new Set()})});
+ {const lp=vectorize(kid,KGW,KGH,NK);for(let k=0;k<NK;k++)REG[REG.length-NK+k].vp=loopsToPath(lp[k]);const pl=vectorize(kprov,KGW,KGH,provs.length);provVP=pl.map(l=>loopsToPath(l,8))}
+ krInfo={pairs};
+ krCanvas=document.createElement('canvas');krCanvas.width=KGW;krCanvas.height=KGH;krCtx=krCanvas.getContext('2d');krImg=krCtx.createImageData(KGW,KGH);
+}
+function link(i,j,sea){if(i===j||REG[i].adj.includes(j))return;REG[i].adj.push(j);REG[j].adj.push(i);if(sea){REG[i].sea.add(j);REG[j].sea.add(i)}}
+function minDist(a,b){let md=1e18;for(const p of a.sp)for(const q of b.sp){const d=(p[0]-q[0])**2+(p[1]-q[1])**2;if(d<md)md=d}return Math.sqrt(md)}
+function buildAdj(){
+ const N=REG.length;
+ if(krInfo)for(const [k,c] of krInfo.pairs){if(c<4)continue;const [a,b]=k.split('_').map(Number);link(a,b,false)}
+ const C=[];for(let i=NK;i<N;i++)C.push(i);
+ const LAND=2.5,SEA=32,near={};
+ for(let x=0;x<C.length;x++)for(let y=x+1;y<C.length;y++){const i=C[x],j=C[y],a=REG[i].bb,b=REG[j].bb;
+  if(a[0]-SEA>b[2]||b[0]-SEA>a[2]||a[1]-SEA>b[3]||b[1]-SEA>a[3])continue;const d=minDist(REG[i],REG[j]);
+  if(d<LAND)link(i,j,false);else{(near[i]=near[i]||[]).push([j,d]);(near[j]=near[j]||[]).push([i,d])}}
+ for(const i in near){near[i].sort((a,b)=>a[1]-b[1]);const lim=REG[i].adj.length?1:2;for(let k=0;k<Math.min(lim,near[i].length);k++)link(+i,near[i][k][0],true)}
+ // Korea <-> countries
+ if(NK){const kb=[1e9,1e9,-1e9,-1e9];for(let i=0;i<NK;i++){const b=REG[i].bb;kb[0]=Math.min(kb[0],b[0]);kb[1]=Math.min(kb[1],b[1]);kb[2]=Math.max(kb[2],b[2]);kb[3]=Math.max(kb[3],b[3])}
+  const cands=[];for(const j of C){const b=REG[j].bb;if(b[0]-40>kb[2]||kb[0]-40>b[2]||b[1]-40>kb[3]||kb[1]-40>b[3])continue;let best=-1,bd=1e18;for(let i=0;i<NK;i++){const d=minDist(REG[i],REG[j]);if(d<bd){bd=d;best=i}}cands.push([j,best,bd])}
+  cands.sort((a,b)=>a[2]-b[2]);
+  for(const [j,i,d] of cands){if(d<1.6){for(let k=0;k<NK;k++)if(minDist(REG[k],REG[j])<1.6)link(k,j,false)}}
+  cands.filter(c=>c[2]>=1.6&&c[2]<14).slice(0,3).forEach(([j,i])=>link(i,j,true));
+  // Korean islands w/o land neighbours -> nearest Korean region by sea
+  {const kp=[...Array(NK).keys()],kf=x=>kp[x]===x?x:(kp[x]=kf(kp[x]));for(let i=0;i<NK;i++)for(const j of REG[i].adj)if(j<NK)kp[kf(i)]=kf(j);
+   for(let g=0;g<40;g++){const cm={};for(let i=0;i<NK;i++)(cm[kf(i)]=cm[kf(i)]||[]).push(i);const ks=Object.keys(cm);if(ks.length<=1)break;ks.sort((a,b)=>cm[b].length-cm[a].length);const sm=cm[ks[ks.length-1]];if(sm.every(i=>REG[i].empty)){for(const i of sm)kp[kf(i)]=kf(cm[ks[0]][0]);continue}
+    let bd=1e18,bi=-1,bj=-1;for(const i of sm)for(let j=0;j<NK;j++){if(kf(j)===kf(i)||REG[j].empty||REG[i].empty)continue;const d=minDist(REG[i],REG[j]);if(d<bd){bd=d;bi=i;bj=j}}if(bi<0)break;link(bi,bj,true);kp[kf(bi)]=kf(bj)}}
+  for(let i=0;i<NK;i++){if(REG[i].empty||REG[i].adj.some(j=>!REG[i].sea.has(j)))continue;let b=-1,bd=1e18;for(let k=0;k<NK;k++){if(k===i||REG[k].empty)continue;const d=minDist(REG[i],REG[k]);if(d<bd){bd=d;b=k}}if(b>=0)link(i,b,true)}}
+ // connectivity repair
+ const par=[...Array(N).keys()],f=x=>par[x]===x?x:(par[x]=f(par[x]));
+ for(let i=0;i<N;i++)for(const j of REG[i].adj)par[f(i)]=f(j);
+ for(let g=0;g<80;g++){const comps={};for(let i=0;i<N;i++)if(!REG[i].empty)(comps[f(i)]=comps[f(i)]||[]).push(i);const ks=Object.keys(comps);if(ks.length<=1)break;
+  ks.sort((a,b)=>comps[b].length-comps[a].length);const sm=comps[ks[ks.length-1]];let bd=1e18,bi=-1,bj=-1;
+  for(const i of sm)for(let j=0;j<N;j++){if(f(j)===f(i)||REG[j].empty)continue;const d=(REG[i].lx-REG[j].lx)**2+(REG[i].ly-REG[j].ly)**2;if(d<bd){bd=d;bi=i;bj=j}}if(bi<0)break;link(bi,bj,true);par[f(bi)]=f(bj)}
+}
+const KEYIDX=new Map();
+
+/* ===== textures (land, night, lights) ===== */
+let landTex=null,nightTex=null,lights=[];
+const DESERTS=[[-17,60,14,34],[34,60,14,33],[113,150,-33,-19],[52,75,25,42],[-118,-103,25,38],[-74,-68,-30,-18],[78,118,36,47],[12,25,-28,-18]];
+function makeLand(){const w=1024,h=Math.round(WH/2);landTex=document.createElement('canvas');landTex.width=w;landTex.height=h;
+ const g=landTex.getContext('2d',{willReadFrequently:true});g.setTransform(.5,0,0,.5,0,0);g.fillStyle='#fff';g.fill(landPath,'evenodd');g.setTransform(1,0,0,1,0,0);
+ const img=g.getImageData(0,0,w,h),d=img.data;
+ for(let y=0;y<h;y++){const lat=unproj(0,y*2)[1],al=Math.abs(lat);for(let x=0;x<w;x++){const i=(y*w+x)*4;if(d[i+3]===0)continue;const lon=x/w*360-180;
+  const n=fbm(x*.045,y*.045,3),n2=fbm(x*.18+50,y*.18,2);let r=30,gg=58,b=34;if(al<14){r=20;gg=54;b=28}
+  let des=0;for(const q of DESERTS){const dx=Math.max(q[0]-lon,0,lon-q[1]),dy=Math.max(q[2]-lat,0,lat-q[3]);des=Math.max(des,1-Math.hypot(dx,dy)/7)}des=clamp(des*(.55+.9*n),0,1);
+  r+=(132-r)*des;gg+=(108-gg)*des;b+=(70-b)*des;const tu=clamp((al-55)/12,0,1);r+=(88-r)*tu;gg+=(92-gg)*tu;b+=(84-b)*tu;const ic=clamp((al-70)/8,0,1)*(.6+.6*n);r+=(170-r)*ic;gg+=(180-gg)*ic;b+=(190-b)*ic;
+  const e1=fbm(x*.09+.6,y*.09,3),e0=fbm(x*.09-.6,y*.09,3);const m=(.62+.55*n2)*clamp(1+(e0-e1)*2.2,.7,1.3)*.7;d[i]=r*m;d[i+1]=gg*m;d[i+2]=b*m}}g.putImageData(img,0,0)}
+let krTerr=null;const RT=24;
+function makeKoreaTerrain(){if(!NK)return;const ww=KGW/RS,wh=KGH/RS,w=Math.ceil(ww*RT),h=Math.ceil(wh*RT);
+ const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d',{willReadFrequently:true});
+ g.setTransform(RT,0,0,RT,-KX0*RT,-KY0*RT);g.fillStyle='#fff';g.fill(landNoKR,'evenodd');for(const pp of provPaths)g.fill(pp,'evenodd');
+ g.setTransform(1,0,0,1,0,0);const md=g.getImageData(0,0,w,h).data;
+ const sm=document.createElement('canvas');sm.width=Math.ceil(w/10);sm.height=Math.ceil(h/10);const sg=sm.getContext('2d',{willReadFrequently:true});sg.drawImage(c,0,0,sm.width,sm.height);
+ const bl=document.createElement('canvas');bl.width=Math.ceil(w/4);bl.height=Math.ceil(h/4);const bg=bl.getContext('2d',{willReadFrequently:true});bg.imageSmoothingEnabled=true;bg.drawImage(sm,0,0,bl.width,bl.height);const bd=bg.getImageData(0,0,bl.width,bl.height).data;
+ const E=new Float32Array(w*h);
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=y*w+x;if(md[i*4+3]<100)continue;const X=KX0+x/RT,Y=KY0+y/RT;const r=1-Math.abs(2*fbm(X*.42+11,Y*.42+3,4)-1);E[i]=.55*fbm(X*.16,Y*.16,4)+.45*r*r}
+ const urb=[];for(let k=0;k<NK;k++){const R_=REG[k];if(R_.empty)continue;urb.push([R_.ux,R_.uy,R_.tier===3?.55:R_.tier===2?.36:.17])}
+ const img=g.createImageData(w,h),d=img.data;
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=y*w+x,p=i*4,X=KX0+x/RT,Y=KY0+y/RT;
+  const fade=Math.min(1,x/(w*.06),(w-1-x)/(w*.06),y/(h*.06),(h-1-y)/(h*.06));
+  if(md[p+3]<100){const cv_=bd[((Math.floor(y/4)*bl.width)+Math.floor(x/4))*4+3]/255;const n=vn(X*1.3,Y*1.3);
+   d[p]=8+26*cv_+n*6;d[p+1]=26+60*cv_+n*8;d[p+2]=48+60*cv_+n*10;d[p+3]=255*fade*.92;continue}
+  const e=E[i],ex=(E[i+1]||e)-(E[i-1]||e),ey=(E[i+w]||e)-(E[i-w]||e);const sh=clamp(1+(-ex-ey)*3.2,.82,1.16);
+  const f1=fbm(X*1.1+5,Y*1.1,3),f2=vn(X*4.5,Y*4.5),f3=vn(X*14,Y*14);
+  let r=104+26*f1,gg=112+16*f1,b=70+8*f1;
+  if(f2>.62){r-=14;gg+=6;b-=6}else if(f2<.3){r+=16;gg+=10;b+=6}
+  const fo=clamp((e-.46)/.16,0,1)*(.75+.5*f1);r+=(52-r)*fo;gg+=(80-gg)*fo;b+=(48-b)*fo;
+  r*=.92+.16*f3;gg*=.92+.16*f3;b*=.92+.16*f3;
+  let u=0;for(const q of urb){const dx=X-q[0],dy=Y-q[1],dd=dx*dx+dy*dy;if(dd<q[2]*q[2]*2.2){u=Math.max(u,1-Math.sqrt(dd)/(q[2]*1.48))}}
+  if(u>0){u=clamp(u*(0.6+.8*vn(X*6,Y*6)),0,1);const sp=.75+.5*hsh(x,y);r+=(150*sp-r)*u;gg+=(148*sp-gg)*u;b+=(144*sp-b)*u}
+  const m=sh*.62;d[p]=clamp(r*m,0,255);d[p+1]=clamp(gg*m,0,255);d[p+2]=clamp(b*m,0,255);d[p+3]=255*fade}
+ g.putImageData(img,0,0);
+ g.globalCompositeOperation='lighter';
+ for(let k=0;k<NK;k++){const R_=REG[k];if(R_.empty)continue;const cx=(R_.ux-KX0)*RT,cy=(R_.uy-KY0)*RT,rad=(R_.tier===3?.55:R_.tier===2?.38:.2)*RT,cnt=R_.tier===3?170:R_.tier===2?90:30;
+  const gr=g.createRadialGradient(cx,cy,0,cx,cy,rad*1.6);gr.addColorStop(0,'rgba(255,170,70,.13)');gr.addColorStop(1,'rgba(255,170,70,0)');g.fillStyle=gr;g.fillRect(cx-rad*1.6,cy-rad*1.6,rad*3.2,rad*3.2);
+  for(let q=0;q<cnt;q++){const a=Math.random()*6.283,rr_=rad*Math.abs(rnd(-1,1)+rnd(-1,1))*.7,x=cx+Math.cos(a)*rr_,y=cy+Math.sin(a)*rr_;const ix=x|0,iy=y|0;if(ix<0||iy<0||ix>=w||iy>=h||md[(iy*w+ix)*4+3]<100)continue;
+   g.fillStyle=`rgba(255,${180+Math.random()*50|0},${80+Math.random()*60|0},${rnd(.2,.65)})`;const z=Math.random()<.12?1.4:.9;g.fillRect(x,y,z,z)}}
+ g.globalCompositeOperation='source-over';krTerr=c}
+function sunNow(){const t=new Date(),st=new Date(Date.UTC(t.getUTCFullYear(),0,0)),doy=(t-st)/864e5;return{dec:-23.44*Math.cos(2*Math.PI/365*(doy+10))*D2R,lon:-(t.getUTCHours()+t.getUTCMinutes()/60-12)*15}}
+function nightAt(lon,lat,s){const cz=Math.sin(lat*D2R)*Math.sin(s.dec)+Math.cos(lat*D2R)*Math.cos(s.dec)*Math.cos((lon-s.lon)*D2R);return clamp((.08-cz)/.22,0,1)}
+function makeNight(){const w=256,h=Math.round(256*WH/WW);if(!nightTex){nightTex=document.createElement('canvas');nightTex.width=w;nightTex.height=h}
+ const g=nightTex.getContext('2d'),img=g.createImageData(w,h),d=img.data,s=sunNow();
+ for(let y=0;y<h;y++){const lat=unproj(0,(y+.5)/h*WH)[1];for(let x=0;x<w;x++){const nf=nightAt((x+.5)/w*360-180,lat,s),i=(y*w+x)*4;d[i]=2;d[i+1]=8;d[i+2]=26;d[i+3]=nf*92}}
+ g.putImageData(img,0,0);for(const L of lights)L.n=nightAt(L.lon,L.lat,s)}
+function makeLights(){const tc=document.createElement('canvas').getContext('2d');
+ for(let i=NK;i<NR;i++){const c=REG[i];const n=Math.round(clamp(Math.sqrt(c.area)*.9,2,90));let tries=0,got=0;
+  while(got<n&&tries<n*12){tries++;const cl=Math.random()<.6&&got>0?lights[lights.length-1]:null;const x=cl?cl.x+rnd(-4,4):rnd(c.bb[0],c.bb[2]),y=cl?cl.y+rnd(-4,4):rnd(c.bb[1],c.bb[3]);
+   if(!tc.isPointInPath(c.path,x,y,'evenodd'))continue;const ll=unproj(x,y);lights.push({x,y,lon:ll[0],lat:ll[1],r:Math.random()<.12?2.2:1,a:rnd(.4,1),n:0});got++}}
+ for(let i=0;i<0;i++){const c=REG[i];const n=c.tier*6;for(let k=0;k<n;k++){const x=c.lx+rnd(-.6,.6)*Math.min(c.w,2),y=c.ly+rnd(-.6,.6)*Math.min(c.w,2);const ll=unproj(x,y);lights.push({x,y,lon:ll[0],lat:ll[1],r:c.tier===3&&Math.random()<.4?2:1,a:rnd(.5,1),n:0,k:1})}}}
+
+/* ===== network layer (shared db / local fallback) ===== */
+function LocalDB(){const docs=new Map(),subs=new Set();const colOf=p=>p.slice(0,p.lastIndexOf('/'));
+ const snap=p=>{const d=docs.get(p);return{id:p.split('/').pop(),exists:!!d,data:()=>d,metadata:{fromCache:false,hasPendingWrites:false}}};
+ const fire=c=>{for(const s of subs)if(s.col===c)s.run()};
+ const doc=p=>({id:p.split('/').pop(),path:p,get:async()=>snap(p),set:async d=>{docs.set(p,JSON.parse(JSON.stringify(d)));fire(colOf(p))},
+  update:async d=>{if(!docs.has(p))throw{code:'invalid_argument'};docs.set(p,Object.assign({},docs.get(p),JSON.parse(JSON.stringify(d))));fire(colOf(p))},
+  delete:async()=>{docs.delete(p);fire(colOf(p))},acquire:async()=>({acquired:true}),onSnapshot(fn){const s={col:colOf(p),run:()=>setTimeout(()=>fn(snap(p)))};subs.add(s);s.run();return()=>subs.delete(s)}});
+ const q=(c,o,l)=>({path:c,where(){return this},orderBy:(f,d)=>q(c,[f,d||'asc'],l),limit:n=>q(c,o,n),doc:id=>doc(c+'/'+(id||Math.random().toString(36).slice(2,12))),
+  add:async d=>{const r=doc(c+'/'+Math.random().toString(36).slice(2,12));await r.set(d);return r},
+  get:async()=>qs(),onSnapshot(fn){const s={col:c,run:()=>setTimeout(()=>fn(qs()))};subs.add(s);s.run();return()=>subs.delete(s)}});
+ function qs(){return null}
+ const mk=(c,o,l)=>{const base=q(c,o,l);base.get=async()=>run(c,o,l);base.onSnapshot=fn=>{const s={col:c,run:()=>setTimeout(()=>fn(run(c,o,l)))};subs.add(s);s.run();return()=>subs.delete(s)};base.orderBy=(f,d)=>mk(c,[f,d||'asc'],l);base.limit=n=>mk(c,o,n);return base};
+ function run(c,o,l){let a=[...docs.keys()].filter(k=>colOf(k)===c).map(snap);if(o)a.sort((x,y)=>{const u=x.data()[o[0]],v=y.data()[o[0]];return(u<v?-1:u>v?1:0)*(o[1]==='desc'?-1:1)});if(l)a=a.slice(0,l);return{docs:a,size:a.length,empty:!a.length,docChanges:()=>a.map(d=>({type:'added',doc:d})),metadata:{fromCache:false,hasPendingWrites:false}}}
+ return{doc,collection:c=>mk(c)}}
+let db=null,userCap=null,room=null,UID='local',NET=false,canWrite=true;
+const R={},P={},A={},D={},O={},CHATS=[],LOGS=[];const peers=new Map();
+const wq=new Map();
+function W(path,fn){const p=(wq.get(path)||Promise.resolve()).then(fn).catch(e=>{console.warn('write fail',path,e);if(e&&e.code==='invalid_argument'&&NET){canWrite=false;toast('이 지도에 쓸 권한이 없어요 (관전 모드)')}else if(e&&e.code==='quota_exceeded')toast('저장 공간이 가득 찼어요');else if(e&&e.code==='resource_exhausted')toast('요청이 너무 많아요. 잠시 후 다시 시도하세요')});wq.set(path,p);return p}
+async function connect(){
+ const use=n=>(window.claude&&typeof window.claude.use==='function')?Promise.race([window.claude.use(n),new Promise(r=>setTimeout(()=>r(null),10000))]).catch(()=>null):Promise.resolve(null);
+ [db,userCap,room]=await Promise.all([use('db'),use('user'),use('room')]);
+ if(db&&userCap){try{const id=await userCap.id();if(id){UID=String(id);NET=true}}catch(e){}}
+ if(!NET){db=LocalDB();UID='local'}
+ if(NET&&userCap&&userCap.can){try{const c=await userCap.can('data.write');if(c===false)canWrite=false}catch(e){}}
+ const mb=$('#modeB');mb.textContent=NET?'🟢 온라인 멀티플레이':'⚠ 오프라인 연습 모드';mb.classList.toggle('net',NET);
+}
+let firstSnap=false,snapTimer=null;
+function subscribe(){
+ const err=e=>{console.warn('snapshot error',e)};
+ db.collection('regions').onSnapshot(s=>{for(const k in R)delete R[k];for(const d of s.docs)R[d.id]=d.data();firstSnap=true;krDirty=true},err);
+ db.collection('players').onSnapshot(s=>{for(const k in P)delete P[k];for(const d of s.docs)P[d.id]=d.data();krDirty=true;onPlayers()},err);
+ db.collection('armies').onSnapshot(s=>{for(const k in A)delete A[k];for(const d of s.docs)A[d.id]=d.data()},err);
+ db.collection('dip').onSnapshot(s=>{for(const k in D)delete D[k];for(const d of s.docs)D[d.id]=d.data();onDip()},err);
+ db.collection('offers').onSnapshot(s=>{for(const k in O)delete O[k];for(const d of s.docs)O[d.id]=d.data();onOffers()},err);
+ db.collection('chat').orderBy('ts','desc').limit(40).onSnapshot(s=>{CHATS.length=0;for(const d of s.docs)CHATS.push(d.data());CHATS.reverse();renderLog()},err);
+ db.collection('logs').orderBy('ts','desc').limit(30).onSnapshot(s=>{LOGS.length=0;for(const d of s.docs)LOGS.push(d.data());LOGS.reverse();renderLog()},err);
+ if(room){try{room.onPeers(ps=>{peers.clear();for(const p of ps||[]){const st=p.presence||p.state||p.data||p||{};if(st&&st.u)peers.set(st.u,st)}$('#onN').textContent=Math.max(1,peers.size)})}catch(e){}}
+}
+function setPresence(){if(!room)return;const me=P[UID];try{room.presence({u:UID,n:me?me.nick:'',c:me?me.col:'',a:me?me.av:''})}catch(e){}}
+function isOnline(u){return u===UID||peers.has(u)}
+
+/* ===== game state helpers ===== */
+const now=()=>Date.now();
+function rs(i){return R[REG[i].key]||{o:'',t:REG[i].base,ts:0,f:0,pl:0,el:0}}
+function ownerOf(i){const o=rs(i).o;return o&&P[o]?o:(o||'')}
+function capOfPlayer(u){return P[u]&&P[u].cap}
+function prodOf(i,o){if(!o)return 0;return REG[i].prod*(1+.4*(rs(i).pl|0))*(capOfPlayer(o)===REG[i].key?1.5:1)}
+function troopCap(i){return 3000+REG[i].prod*700}
+function troopsOf(i,t=now()){const d=rs(i);if(!d.o)return d.t;const g=d.t+prodOf(i,d.o)*Math.max(0,t-(d.ts||t))/1000;return Math.min(Math.max(troopCap(i),d.t),g)}
+function colOf(u){return u&&P[u]?P[u].col:u?'#8f98aa':'#9aa3b2'}
+function nickOf(u){return u&&P[u]?P[u].nick:u?'알 수 없음':'중립'}
+function avOf(u){return u&&P[u]?P[u].av:'🏳'}
+function myRegions(){const a=[];for(let i=0;i<NR;i++)if(rs(i).o===UID)a.push(i);return a}
+function regIncome(i){return 1+REG[i].prod*.8+(rs(i).el|0)*6}
+function incomeOf(u){let s=2;for(let i=0;i<NR;i++)if(rs(i).o===u)s+=regIncome(i);return s}
+let MB=null,MBts=0;
+function myMoney(){const p=P[UID];if(!p)return 0;if(MB===null){MB=p.m+incomeOf(UID)*Math.min(8*3600,Math.max(0,now()-p.mts))/1000;MBts=now()}return MB+incomeOf(UID)*Math.max(0,now()-MBts)/1000}
+function accrue(){if(!P[UID])return;MB=myMoney();MBts=now()}
+function dipKey(a,b){return safeKey([a,b].sort().join('~'))}
+function isAlly(u){if(!u||u===UID)return false;const d=D[dipKey(UID,u)];return!!(d&&d.s==='ally')}
+function setRegion(i,o,t,f,pl,el,bld){const cur=rs(i);const d={o,t:Math.round(Math.max(0,t)),ts:now(),f:f|0,pl:pl===undefined?(cur.pl|0):pl,el:el===undefined?(cur.el|0):el};if(bld){if(bld.bk){d.bk=bld.bk;d.be=bld.be}}else if(bld===undefined&&cur.bk&&cur.o===o){d.bk=cur.bk;d.be=cur.be}R[REG[i].key]=d;krDirty=true;return W('regions/'+REG[i].key,()=>db.doc('regions/'+REG[i].key).set(d))}
+function savePlayer(extra){const p=Object.assign({},P[UID]||{},extra||{});if(!extra||extra.m===undefined){p.m=Math.round(myMoney());p.mts=now()}MB=p.m;MBts=p.mts||now();P[UID]=p;return W('players/'+UID,()=>db.doc('players/'+UID).set(p))}
+let slotN=0;function slot(){return 's'+(((now()/40|0)+(slotN++))%1500)}
+function writeLog(x,c){const d={ts:now(),x:String(x).slice(0,140),c:c||''};const k=slot();W('logs/'+k,()=>db.doc('logs/'+k).set(d))}
+function sayChat(x,ch){const me=P[UID];const d={ts:now(),u:UID,n:me?me.nick:'?',c:me?me.col:'#fff',x:String(x).slice(0,80),ch};const s='c'+(((now()/40|0)+(slotN++))%600);W('chat/'+s,()=>db.doc('chat/'+s).set(d))}
+
+/* ===== camera ===== */
+const cam={x:0,y:0,s:1};let fitS=1,camAnim=null;const TOPH=46,BOTH=60;
+function resize(){DPR=Math.min(window.devicePixelRatio||1,2);VW=innerWidth;VH=innerHeight;cv.width=VW*DPR;cv.height=VH*DPR;fitS=Math.min(VW/WW,(VH-TOPH-BOTH)/WH)}
+const SMAX=()=>fitS*320;
+function camTo(x,y,s,anim){s=clamp(s,fitS*.85,SMAX());const tx=VW/2-x*s,ty=TOPH+(VH-TOPH-BOTH)/2-y*s;if(anim)camAnim={fx:cam.x,fy:cam.y,fs:cam.s,tx,ty,ts:s,t:0};else{cam.x=tx;cam.y=ty;cam.s=s}}
+function fitWorld(a){camTo(WW/2,WH/2+40,fitS,a)}
+function fitKorea(a){if(!NK)return fitWorld(a);const w=KGW/RS,h=KGH/RS;camTo(KX0+w/2,KY0+h/2,Math.min(VW*.8/w,(VH-TOPH-BOTH)*.9/h),a)}
+function focus(i,a=true){const c=REG[i];const h=Math.max(c.bb[3]-c.bb[1],c.kind==='k'?1.2:8),w=Math.max(c.w,c.kind==='k'?1.2:8);camTo(c.lx,c.ly,Math.max(Math.min(VW*.3/w,VH*.35/h),cam.s*.6),a)}
+function zoomAt(sx,sy,f){const ns=clamp(cam.s*f,fitS*.85,SMAX()),wx=(sx-cam.x)/cam.s,wy=(sy-cam.y)/cam.s;cam.s=ns;cam.x=sx-wx*ns;cam.y=sy-wy*ns;camAnim=null}
+const W2S=(x,y)=>[cam.x+x*cam.s,cam.y+y*cam.s];
+
+/* ===== picking ===== */
+const pctx=document.createElement('canvas').getContext('2d');
+function pick(sx,sy){const x=(sx-cam.x)/cam.s,y=(sy-cam.y)/cam.s;
+ if(NK){const gx=Math.floor((x-KX0)*RS),gy=Math.floor((y-KY0)*RS);if(gx>=0&&gy>=0&&gx<KGW&&gy<KGH){const id=kid[gy*KGW+gx];if(id>=0)return id}}
+ let best=-1,ba=1e18;for(let i=NK;i<NR;i++){const b=REG[i].bb;if(x<b[0]-1||x>b[2]+1||y<b[1]-1||y>b[3]+1)continue;if(pctx.isPointInPath(REG[i].path,x,y,'evenodd')&&REG[i].area<ba){ba=REG[i].area;best=i}}
+ if(best<0){const tol=12/cam.s;for(let i=0;i<NR;i++){if(REG[i].w*cam.s>20)continue;const d=Math.hypot(REG[i].lx-x,REG[i].ly-y);if(d<tol&&d<ba){ba=d;best=i}}}return best}
+
+/* ===== input ===== */
+const ptr=new Map();let drag=null,pinch=null,moved=false;
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});camAnim=null;hideSearch();
+ if(ptr.size===1){drag={x:e.clientX,y:e.clientY,cx:cam.x,cy:cam.y};moved=false}else if(ptr.size===2){const[a,b]=[...ptr.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y)||1,s:cam.s,mx:(a.x+b.x)/2,my:(a.y+b.y)/2,cx:cam.x,cy:cam.y};moved=true}});
+cv.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(pinch&&ptr.size>=2){const[a,b]=[...ptr.values()];const ns=clamp(pinch.s*Math.hypot(a.x-b.x,a.y-b.y)/pinch.d,fitS*.85,SMAX());const wx=(pinch.mx-pinch.cx)/pinch.s,wy=(pinch.my-pinch.cy)/pinch.s;cam.s=ns;cam.x=(a.x+b.x)/2-wx*ns;cam.y=(a.y+b.y)/2-wy*ns}
+ else if(drag&&ptr.size===1){const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!moved&&Math.hypot(dx,dy)>7)moved=true;if(moved){cam.x=drag.cx+dx;cam.y=drag.cy+dy}}});
+function pend(e,c){if(!ptr.has(e.pointerId))return;ptr.delete(e.pointerId);if(ptr.size===0){if(!moved&&drag&&!c)tap(e.clientX,e.clientY);drag=null;pinch=null}else if(ptr.size===1){pinch=null;const p=[...ptr.values()][0];drag={x:p.x,y:p.y,cx:cam.x,cy:cam.y}}}
+cv.addEventListener('pointerup',e=>pend(e,false));cv.addEventListener('pointercancel',e=>pend(e,true));
+cv.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,Math.exp(-e.deltaY*.0015))},{passive:false});
+
+/* ===== phases & actions ===== */
+let phase='load',sel=-1,insp=-1,ratio=.75,fx=[];const resolving=new Set();
+function tap(sx,sy){const i=pick(sx,sy);
+ if(phase==='pick'){if(i<0||REG[i].empty)return;if(rs(i).o)return toast('이미 주인이 있는 지역이에요');pickCand=i;insp=i;krDirty=true;renderPick();return}
+ if(phase!=='play')return;
+ if(i<0){sel=-1;tgt=-1;insp=-1;krDirty=true;refreshPanels();renderAct();return}
+ const o=rs(i).o;
+ if(o!==UID){const srcs=srcsFor(i);if(srcs.length){if(!(sel>=0&&srcs.includes(sel)))sel=srcs[0];tgt=i;insp=i;krDirty=true;openRight();refreshPanels();renderAct();return}}
+ else if(sel>=0&&i!==sel&&REG[sel].adj.includes(i)&&rs(sel).o===UID&&tgt<0&&lastTap===sel){tgt=i;insp=i;krDirty=true;refreshPanels();renderAct();return}
+ if(o===UID){if(sel===i&&tgt<0){sel=-1;tgt=-1}else if(tgt>=0&&srcsFor(tgt).includes(i)&&rs(tgt).o!==UID){sel=i}else{sel=i;tgt=-1}insp=i;lastTap=i}
+ else{insp=i;tgt=-1;toast('내 영토와 맞닿은 지역만 공격할 수 있어요')}
+ krDirty=true;openRight();refreshPanels();renderAct()}
+let tgt=-1,pickCand=-1,lastTap=-1;
+function srcsFor(i){return REG[i].adj.filter(j=>rs(j).o===UID&&!REG[j].empty).sort((a,b)=>troopsOf(b)-troopsOf(a))}
+function cycleSrc(){if(tgt<0)return;const ss=srcsFor(tgt);if(ss.length<2)return;sel=ss[(ss.indexOf(sel)+1)%ss.length];krDirty=true;renderAct();refreshPanels()}
+function doAttack(joint){if(phase!=='play')return;if(joint===true&&tgt>=0){const T_=tgt,ss=srcsFor(T_);let tot=0,n=0;for(const j of ss){const am=Math.floor(troopsOf(j)*ratio);if(am<10)continue;sendArmy(j,T_,am);tot+=am;n++}if(!n)return toast('병력이 부족해요');toast(`⚔ 합동 공격! ${n}곳에서 ${fmt(tot)} 병력이 ${REG[T_].name}(으)로 진군`);const b=REG[T_];camTo(b.lx,b.ly,cam.s,true);tgt=-1;krDirty=true;renderAct();refreshPanels();return}
+ if(sel<0||rs(sel).o!==UID){const c=KEYIDX.get(capOfPlayer(UID));if(c!==undefined&&rs(c).o===UID){sel=c;insp=c;tgt=-1;krDirty=true;focus(c);renderAct();refreshPanels()}return toast('① 내 영토 선택 → ② 공격할 이웃 지역 탭 → ③ 공격')}
+ if(tgt<0)return toast('공격할 이웃 지역을 지도에서 탭하세요 (점선 표시된 곳)');
+ const o=rs(tgt).o;if(o&&o!==UID&&isAlly(o))return toast('동맹 영토는 공격할 수 없어요');
+ if(!canWrite)return toast('관전 모드에서는 공격할 수 없어요');
+ const amt=Math.floor(troopsOf(sel)*ratio);if(amt<10)return toast('병력이 부족해요');
+ const a=REG[sel],b=REG[tgt],sea=a.sea.has(tgt);const dur=sendArmy(sel,tgt,amt);
+ toast(o===UID?`🚶 ${b.name}(으)로 ${fmt(amt)} 이동 · ${tstr(dur)}`:`⚔ 진군 개시! ${a.name} → ${b.name} ${sea?'(해상) ':''}· 도착 ${tstr(dur)}`);
+ {const len=Math.hypot(b.lx-a.lx,b.ly-a.ly)||1;camTo((a.lx+b.lx)/2,(a.ly+b.ly)/2,clamp(Math.min(VW,VH)*.42/len,cam.s,SMAX()),true)}
+ tgt=-1;krDirty=true;renderAct();refreshPanels()}
+function odds(i,j,amt){const d=rs(j),sea=REG[i].sea.has(j);const atk=amt*(sea?.85:1),def=troopsOf(j)*(1+.25*(d.f|0));return{atk,def,r:atk/(def||1)}}
+function renderAct(){const el=$('#act'),b=$('#bAtk');
+ if(phase!=='play'||sel<0||rs(sel).o!==UID){el.classList.add('hide');b.classList.add('dim');return}
+ el.classList.remove('hide');const A_=REG[sel];
+ if(tgt<0){b.classList.add('dim');const n=A_.adj.filter(j=>rs(j).o!==UID).length;const d=rs(sel),pl=d.pl|0,ev=d.el|0,f=d.f|0,bk=d.bk&&d.be>now()?d.bk:'',left=bk?(d.be-now())/1000:0;const bt=(cls,fn,ic,t,sub,dis)=>`<button class="${cls}" ${dis?'disabled':''} onclick="${fn}"><span class="ic">${ic}</span><b>${t}</b><small>${sub}</small></button>`;
+ $('#act').innerHTML=`<button class="cl" onclick="sel=-1;insp=-1;tgt=-1;krDirty=true;renderAct();refreshPanels()">✕</button><div class="ln">📍 ${esc(A_.name)} <span class="st">⚔ ${fmt(troopsOf(sel))} · +${prodOf(sel,UID).toFixed(1)}/초 · 💰+₩${regIncome(sel).toFixed(0)}/초</span></div>
+ <div class="dev">${bt('blue',"recruit()",'🪖','징병','+1,000 · ₩2,000')}${bk==='pl'?bt('',"develop('pl')",'🏗️','병영 공사 중',tstr(left)+' 남음',true):bt('',"develop('pl')",'🏭','병영 Lv.'+pl,pl>=DEVMAX?'최고':'생산+40% · 무료 50초',pl>=DEVMAX||!!bk)}${bk==='el'?bt('gold',"develop('el')",'🏗️','경제 공사 중',tstr(left)+' 남음',true):bt('gold',"develop('el')",'💰','경제 Lv.'+ev,ev>=DEVMAX?'최고':'+₩6/초 · 무료 50초',ev>=DEVMAX||!!bk)}${bt('',"fortify()",'🏰','요새 Lv.'+f,f>=3?'최고':'방어+25% · ₩3,000',f>=3)}</div>
+ <div class="odds" style="color:#ffb0b0">⚔ 빨간 점선 이웃 지역(${n}곳)을 탭하면 공격 준비</div>`;return}
+ b.classList.remove('dim');const B_=REG[tgt],o=rs(tgt).o,mine=o===UID,amt=Math.floor(troopsOf(sel)*ratio),sea=A_.sea.has(tgt),od=odds(sel,tgt,amt);
+ const tot=od.atk+od.def||1;let ot,oc;if(mine){ot='내 영토로 병력 이동';oc='#9fd0ff'}else if(o&&isAlly(o)){ot='동맹 영토 - 공격 불가';oc='#7dffb4'}else if(od.r>1.25){ot='✅ 승리 확률 높음';oc='#7dffb4'}else if(od.r>1){ot='⚠️ 박빙 - 위험';oc='#ffd75e'}else{ot='❌ 병력 부족 - 패배 예상';oc='#ff8080'}
+ el.innerHTML=`<button class="cl" onclick="tgt=-1;krDirty=true;renderAct();refreshPanels()">✕</button><div class="ln">${esc(A_.name)} <i>${sea?'⛴ 해상 ➜':'➜'}</i> ${esc(B_.name)} <span style="font-size:11px;color:${colOf(o)}">${o?esc(avOf(o)+' '+nickOf(o)):'🏳 중립'}</span></div>
+ ${mine?'':`<div class="cmp"><span>내 공격력 <b style="color:${colOf(UID)}">${fmt(od.atk)}</b></span><span>상대 방어력 <b style="color:${colOf(o)}">${fmt(od.def)}</b></span></div><div class="pr"><i style="width:${od.atk/tot*100}%;background:${colOf(UID)}"></i><i style="width:${od.def/tot*100}%;background:${o?colOf(o):'#8a94a8'}"></i></div>`}
+ <div class="odds" style="color:${oc}">${ot} · 보낼 병력 ${fmt(amt)} (${Math.round(ratio*100)}%)${sea?' · 해상전 -15%':''}</div>
+ ${(()=>{if(mine)return'';const ss=srcsFor(tgt);const jt=ss.reduce((q,j)=>q+Math.floor(troopsOf(j)*ratio),0);return`<div class="odds" style="color:#cfe0ff">출발지 <b>${esc(A_.name)}</b>${ss.length>1?` <button style="padding:2px 8px;font-size:11px" onclick="cycleSrc()">🔄 바꾸기 (${ss.length}곳)</button>`:''}</div>${ss.length>1?`<div class="go"><button class="red" onclick="doAttack(true)">⚔⚔ 합동 공격 · 인접 ${ss.length}곳 ${fmt(jt)}</button></div>`:''}`})()}
+ <div class="go"><button class="${mine?'blue':'red'}" onclick="doAttack()">${mine?'🚶 이동':'⚔ 공격'}</button><button class="blue" style="flex:.7;font-size:12px" onclick="recruit()">🪖 징병<br><small style="color:#ffd75e">₩2,000</small></button><button class="x" onclick="tgt=-1;krDirty=true;renderAct();refreshPanels()">취소</button></div>`}
+function renderPick(){const el=$('#act');if(phase!=='pick'){return}el.classList.remove('hide');
+ if(pickCand<0){el.innerHTML='<div class="ln">📍 시작할 곳을 지도에서 탭하세요</div><div class="odds" style="color:#9fb3d9">대한민국은 시·군·구 단위, 해외는 국가 단위로 시작해요</div>';return}
+ const c=REG[pickCand];el.innerHTML=`<div class="ln">🚩 ${esc(c.name)} <span style="font-size:11px;color:#9fb3d9">${esc(c.kind==='k'?c.full:'국가')}</span></div><div class="odds" style="color:#cfe0ff">생산 +${c.prod.toFixed(1)}/초 · 이웃 ${c.adj.length}곳</div><div class="go"><button class="red" onclick="beginAt(pickCand)">🚩 여기서 시작</button><button class="x" onclick="pickCand=-1;insp=-1;krDirty=true;renderPick()">다른 곳</button></div>`}
+function sendArmy(from,to,amt){const d=rs(from),t=troopsOf(from);setRegion(from,UID,t-amt,d.f);const a=REG[from],b=REG[to],sea=a.sea.has(to);
+ const len=Math.hypot(b.lx-a.lx,b.ly-a.ly);const dur=clamp(a.kind==='k'&&b.kind==='k'?8+len*4:10+len*.25,8,150)*(sea?1.4:1);
+ const id='a'+now().toString(36)+Math.random().toString(36).slice(2,6);const doc={o:UID,fr:a.key,to:b.key,a:amt,st:now(),dur,sea};A[id]=doc;W('armies/'+id,()=>db.doc('armies/'+id).set(doc));return dur}
+async function resolveArmy(id){if(resolving.has(id))return;resolving.add(id);try{
+ const ref=db.doc('armies/'+id);const lease=await ref.acquire({holder:UID,ttlMs:8000});if(!lease||!lease.acquired)return;
+ const snap=await ref.get();if(!snap.exists){delete A[id];return}const a=snap.data();await ref.delete();delete A[id];
+ const t=KEYIDX.get(a.to),f=KEYIDX.get(a.fr);if(t===undefined)return;const d=rs(t),cur=troopsOf(t),def0=cur;
+ if(d.o===a.o){await setRegion(t,a.o,cur+a.a,d.f);return}
+ const fm=1+.25*(d.f|0),pen=a.sea?.85:1,atk=a.a*pen*rnd(.92,1.08),def=def0*fm;const an=nickOf(a.o),dn=nickOf(d.o);
+ if(atk>def){const rem=Math.max(1,Math.round((atk-def)/pen));await setRegion(t,a.o,rem,Math.max(0,(d.f|0)-1),Math.max(0,(d.pl|0)-1),Math.max(0,(d.el|0)-1),null);
+  writeLog(`${an} → ${REG[t].name} 점령${d.o?' ('+dn+'에게서 빼앗음)':''}`,colOf(a.o));
+  if(a.o===UID){stats.cap++;if(phase==='play'){sel=t;insp=t;tgt=-1;krDirty=true;setTimeout(()=>{renderAct();refreshPanels()},50)}}incoming.delete(id);
+  if(a.o===UID||d.o===UID)queueScene({ti:t,a:a.o,d:d.o,to:REG[t].name,aa:Math.round(a.a*pen),dd:Math.round(def),won:true,left:rem,sea:a.sea,fort:d.f|0});
+  battleFx(t,colOf(a.o),true,{a:a.o,d:d.o,from:f!==undefined?REG[f].name:'?',to:REG[t].name,aa:a.a,dd:def0,won:true,sea:a.sea})}
+ else{const left=Math.round((def-atk)/fm);await setRegion(t,d.o,left,d.f);incoming.delete(id);if(a.o===UID||d.o===UID)queueScene({ti:t,a:a.o,d:d.o,to:REG[t].name,aa:Math.round(a.a*pen),dd:Math.round(def),won:false,left,sea:a.sea,fort:d.f|0});
+  writeLog(`${an}의 ${REG[t].name} 공격 실패 (${d.o?dn:'중립'} 방어 성공)`,d.o?colOf(d.o):'#ffb0b0');
+  battleFx(t,'#ffb040',false,{a:a.o,d:d.o,from:f!==undefined?REG[f].name:'?',to:REG[t].name,aa:a.a,dd:def0,won:false,sea:a.sea})}
+}catch(e){console.warn('resolve',e)}finally{setTimeout(()=>resolving.delete(id),4000)}}
+let stats={cap:0},lastBattle=null;
+const sceneQ=[];let sceneOn=false,sceneTimers=[];
+function queueScene(x){const me=x.a===UID,good=me?x.won:!x.won;const txt=me?(x.won?'점령 성공!':'공격 실패'):(x.won?'영토 함락!':'방어 성공!');if(x.ti!==undefined){fx.push({x:REG[x.ti].lx,y:REG[x.ti].ly,l:2.4,ft:txt,c:good?'#7dffb4':'#ff6b6b'})}toast((good?'🏆 ':'💥 ')+x.to+' '+txt+(x.left?` (남은 병력 ${fmt(x.left)})`:'')+(me&&x.won?' → 여기서 바로 징병·공격 가능':''))}
+function closeScene(){sceneTimers.forEach(clearTimeout);sceneTimers=[];$('#scene').classList.add('hide');sceneOn=false;setTimeout(nextScene,250)}
+$('#scene').addEventListener('click',closeScene);
+function nextScene(){const x=sceneQ.shift();if(!x)return;sceneOn=true;const T=(f,ms)=>sceneTimers.push(setTimeout(f,ms));
+ const me=x.a===UID,def=x.d===UID,good=me?x.won:!x.won;
+ $('#scT').textContent=(me?'⚔ 공격전':'🛡 방어전')+' · '+x.to+(x.sea?' (해상전)':'');$('#scT').className='sct'+(me?'':' blu');
+ $('#scAN').innerHTML=esc(avOf(x.a)+' '+nickOf(x.a))+' <small style="color:#9fb3d9">공격</small>';$('#scDN').innerHTML='<small style="color:#9fb3d9">수비</small> '+esc(x.d?avOf(x.d)+' '+nickOf(x.d):'🏳 중립군');
+ const ac=colOf(x.a),dc=x.d?colOf(x.d):'#8a94a8';$('#scAB').style.background=ac;$('#scDB').style.background=dc;$('#scAB').style.width='100%';$('#scDB').style.width='100%';
+ $('#scAV').textContent=fmt(x.aa);$('#scDV').textContent=fmt(x.dd);const r=$('#scR');r.className='scr';r.textContent='';
+ const f=$('#scF');f.innerHTML='';const unit=x.sea?'🚢':'🪖',na=clamp(Math.round(Math.sqrt(x.aa)/7),2,8),nd=clamp(Math.round(Math.sqrt(x.dd)/7),2,8);
+ for(let k=0;k<na;k++){const u=document.createElement('div');u.className='u ua';u.textContent=k%3===2&&!x.sea?'🚜':unit;u.style.left=(2+k*5.2)+'%';u.style.bottom=(10+(k%3)*9)+'%';u.style.animationDelay=(k*.05)+'s';f.appendChild(u)}
+ for(let k=0;k<nd;k++){const u=document.createElement('div');u.className='u ud';u.textContent=k===0&&x.fort?'🏰':'🪖';u.style.right=(2+k*5.2)+'%';u.style.bottom=(10+(k%3)*9)+'%';f.appendChild(u)}
+ const jet=document.createElement('div');jet.className='jet';jet.textContent='✈️';f.appendChild(jet);
+ for(let k=0;k<14;k++)T(()=>{const b=document.createElement('div');b.className='bm';b.textContent=Math.random()<.7?'💥':'🔥';b.style.left=rnd(30,75)+'%';b.style.top=rnd(25,70)+'%';f.appendChild(b);if(k%4===0){const fl=document.createElement('div');fl.className='fl';f.appendChild(fl)}T(()=>b.remove(),800)},250+k*150);
+ const t0=performance.now(),D=2300,aEnd=x.won?x.left:0,dEnd=x.won?0:x.left;
+ const anim=()=>{const p=Math.min(1,(performance.now()-t0)/D),e=1-Math.pow(1-p,2);const av=x.aa+(aEnd-x.aa)*e,dv=x.dd+(dEnd-x.dd)*e;
+  $('#scAV').textContent=fmt(av);$('#scDV').textContent=fmt(dv);$('#scAB').style.width=(av/x.aa*100)+'%';$('#scDB').style.width=(x.dd?dv/x.dd*100:0)+'%';if(p<1&&sceneOn)requestAnimationFrame(anim)};requestAnimationFrame(anim);
+ T(()=>{r.textContent=me?(x.won?'🏆 점령 성공!':'💥 공격 실패…'):(x.won?'🏳 '+x.to+' 함락…':'🛡 방어 성공!');r.style.color=good?'#7dffb4':'#ff8080';r.classList.add('on');
+  $('#scS').textContent=(me?(x.won?`${x.to}이(가) 내 영토가 됐어요 · 남은 병력 ${fmt(x.left)}`:`상대 잔존 병력 ${fmt(x.left)}`):(x.won?`${nickOf(x.a)}에게 빼앗겼어요`:`남은 병력 ${fmt(x.left)}`))+' · 탭하면 닫혀요'},D+150);
+ T(closeScene,D+3600);$('#scene').classList.remove('hide')}
+const incoming=new Map();
+function battleFx(i,col,cap,info){boom(i,col,cap);if(info.a===UID||info.d===UID)lastBattle=Object.assign(info,{time:now()});refreshPanels()}
+function boom(i,col,cap){const c=REG[i];for(let k=0;k<22;k++){const a=Math.random()*6.28,v=rnd(15,70);fx.push({x:c.lx,y:c.ly,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:rnd(.5,1),c:Math.random()<.5?'#ffcf5a':'#ff5a2a',scr:1})}fx.push({x:c.lx,y:c.ly,l:1,ring:1,c:cap?col:'#ffb040'})}
+const seenArmy=new Set();
+function tick(){const t=now();accrue();checkBuilds();
+ for(const id in A){const a=A[id],ti0=KEYIDX.get(a.to);if(ti0!==undefined&&a.o!==UID&&rs(ti0).o===UID&&!incoming.has(id))incoming.set(id,{a,ti:ti0,dd:Math.round(troopsOf(ti0)*(1+.25*(rs(ti0).f|0))),f:rs(ti0).f|0});}
+ for(const [id,w] of incoming)if(!(id in A)){incoming.delete(id);setTimeout(()=>{const lost=rs(w.ti).o!==UID;const left=Math.round(troopsOf(w.ti));queueScene({ti:w.ti,a:w.a.o,d:UID,to:REG[w.ti].name,aa:Math.round(w.a.a*(w.a.sea?.85:1)),dd:w.dd,won:lost,left,sea:w.a.sea,fort:w.f})},700)}
+ for(const id in A){const a=A[id];const due=a.st+a.dur*1000;
+  if(!seenArmy.has(id)){seenArmy.add(id);const ti=KEYIDX.get(a.to);if(ti!==undefined&&a.o!==UID&&rs(ti).o===UID){toast(`🚨 ${nickOf(a.o)}이(가) ${REG[ti].name}을(를) 공격해 와요!`)}}
+  if(t>=due&&(a.o===UID||t>due+8000))resolveArmy(id)}
+ // capital check
+ const me=P[UID];if(phase==='play'&&me){const mine=myRegions();
+  if(!mine.length&&!Object.values(A).some(a=>a.o===UID)){phase='dead';toast('모든 영토를 잃었어요. 새로운 곳에서 다시 시작하세요');setTimeout(()=>openStart(true),1200)}
+  else if(mine.length&&(KEYIDX.get(me.cap)===undefined||rs(KEYIDX.get(me.cap)).o!==UID)){mine.sort((x,y)=>troopsOf(y)-troopsOf(x));savePlayer({cap:REG[mine[0]].key,m:Math.round(myMoney()),mts:now()});toast(`수도가 ${REG[mine[0]].name}(으)로 옮겨졌어요`)}}}
+function recruit(){const i=sel>=0?sel:insp;if(i<0||rs(i).o!==UID)return toast('징병할 내 영토를 먼저 선택하세요');const m=myMoney();if(m<2000)return toast('돈이 부족해요 (₩2,000)');
+ savePlayer({m:Math.round(m-2000),mts:now()});setRegion(i,UID,troopsOf(i)+1000,rs(i).f);fx.push({x:REG[i].lx,y:REG[i].ly,l:1,ring:1,c:colOf(UID)});toast(`${REG[i].name} 징병 +1,000`);refreshPanels();renderAct()}
+const DEVMAX=5,BUILD_MS=50000;
+function develop(kind){const i=sel>=0?sel:insp;if(i<0||rs(i).o!==UID)return toast('개발할 내 영토를 먼저 선택하세요');const d=rs(i),lv=kind==='pl'?(d.pl|0):(d.el|0);
+ if(d.bk&&d.be>now())return toast(`이미 ${d.bk==='pl'?'병영':'경제'} 공사 중이에요 (${tstr((d.be-now())/1000)})`);if(lv>=DEVMAX)return toast('최고 레벨이에요');
+ setRegion(i,UID,troopsOf(i),d.f,d.pl|0,d.el|0,{bk:kind,be:now()+BUILD_MS});
+ fx.push({x:REG[i].lx,y:REG[i].ly,l:2,ft:'🏗️ 공사 시작',c:'#ffd75e'});toast(`${REG[i].name} ${kind==='pl'?'🏭 병영':'💰 경제'} Lv.${lv+1} 공사 시작 · 50초`);refreshPanels();renderAct()}
+const finishing=new Set();
+function checkBuilds(){const T=now();for(let i=0;i<NR;i++){const d=rs(i);if(d.o!==UID||!d.bk||d.be>T||finishing.has(i))continue;finishing.add(i);
+ const kind=d.bk,nl=(kind==='pl'?(d.pl|0):(d.el|0))+1;setRegion(i,UID,troopsOf(i),d.f,kind==='pl'?Math.min(DEVMAX,nl):d.pl|0,kind==='el'?Math.min(DEVMAX,nl):d.el|0,null).then(()=>setTimeout(()=>finishing.delete(i),1500));
+ fx.push({x:REG[i].lx,y:REG[i].ly,l:2.4,ft:kind==='pl'?`🏭 병영 Lv.${nl} 완공!`:`💰 경제 Lv.${nl} 완공!`,c:kind==='pl'?'#9fd0ff':'#ffd75e'});
+ toast(kind==='pl'?`${REG[i].name} 병영 Lv.${nl} 완공 · 생산 +${nl*40}%`:`${REG[i].name} 경제 Lv.${nl} 완공 · 수입 +₩${nl*6}/초`);setTimeout(()=>{refreshPanels();renderAct()},200)}}
+function fortify(){const i=sel>=0?sel:insp;if(i<0||rs(i).o!==UID)return toast('요새화할 내 영토를 먼저 선택하세요');const d=rs(i);if((d.f|0)>=3)return toast('요새가 최고 레벨이에요');const m=myMoney();if(m<3000)return toast('돈이 부족해요 (₩3,000)');
+ savePlayer({m:Math.round(m-3000),mts:now()});setRegion(i,UID,troopsOf(i),(d.f|0)+1);toast(`${REG[i].name} 요새 Lv.${(d.f|0)+1} (방어 +${((d.f|0)+1)*25}%)`);refreshPanels();renderAct()}
+function proposeAlly(u){const k=dipKey(UID,u);const d={a:UID,b:u,s:'req',by:UID,ts:now()};D[k]=d;W('dip/'+k,()=>db.doc('dip/'+k).set(d));toast(`${nickOf(u)}에게 동맹을 제안했어요`);sayChat(`🤝 ${nickOf(u)}님, 동맹 맺읍시다!`,'ally');refreshPanels()}
+function acceptAlly(u){const k=dipKey(UID,u);const d=Object.assign({},D[k],{s:'ally',ts:now()});D[k]=d;W('dip/'+k,()=>db.doc('dip/'+k).set(d));writeLog(`${nickOf(UID)} ↔ ${nickOf(u)} 동맹 체결`,'#7dffb4');refreshPanels()}
+function dropAlly(u){const k=dipKey(UID,u);const was=D[k]&&D[k].s==='ally';delete D[k];W('dip/'+k,()=>db.doc('dip/'+k).delete());if(was)writeLog(`${nickOf(UID)}이(가) ${nickOf(u)}과(와)의 동맹을 파기`,'#ff9aa5');refreshPanels()}
+function priceOf(i){return Math.round((troopsOf(i)*2+REG[i].prod*400+1500)/100)*100}
+function offerSell(i,u){if(rs(i).o!==UID)return;if(capOfPlayer(UID)===REG[i].key)return toast('수도는 팔 수 없어요');const id='o'+now().toString(36);const d={fr:UID,to:u,key:REG[i].key,p:priceOf(i),s:'open',ts:now()};O[id]=d;W('offers/'+id,()=>db.doc('offers/'+id).set(d));toast(`${nickOf(u)}에게 ${REG[i].name} 판매 제안 (₩${fmt(d.p)})`);refreshPanels()}
+function acceptOffer(id){const o=O[id];if(!o||o.to!==UID||o.s!=='open')return;const i=KEYIDX.get(o.key);if(i===undefined||rs(i).o!==o.fr){W('offers/'+id,()=>db.doc('offers/'+id).update({s:'no'}));return toast('이미 주인이 바뀐 지역이에요')}
+ const m=myMoney();if(m<o.p)return toast('돈이 부족해요');savePlayer({m:Math.round(m-o.p),mts:now()});setRegion(i,UID,troopsOf(i),rs(i).f);O[id]=Object.assign({},o,{s:'paid'});W('offers/'+id,()=>db.doc('offers/'+id).update({s:'paid'}));writeLog(`💱 ${nickOf(UID)}이(가) ${nickOf(o.fr)}에게서 ${REG[i].name} 매입 (₩${fmt(o.p)})`,'#7dffb4');toast('매입 완료!');refreshPanels()}
+function rejectOffer(id){const o=O[id];if(!o)return;O[id]=Object.assign({},o,{s:'no'});W('offers/'+id,()=>db.doc('offers/'+id).update({s:'no'}));refreshPanels()}
+function onOffers(){for(const id in O){const o=O[id];if(o.fr!==UID)continue;
+ if(o.s==='paid'&&!handledOffers.has(id)){handledOffers.add(id);savePlayer({m:Math.round(myMoney()+o.p),mts:now()});toast(`판매 완료! +₩${fmt(o.p)}`);W('offers/'+id,()=>db.doc('offers/'+id).delete())}
+ else if(o.s==='no'&&!handledOffers.has(id)){handledOffers.add(id);toast('판매 제안이 거절됐어요');W('offers/'+id,()=>db.doc('offers/'+id).delete())}}
+ if(Object.values(O).some(o=>o.to===UID&&o.s==='open'))notifyDip();refreshPanels()}
+const handledOffers=new Set();const seenReq=new Set();
+function onDip(){for(const k in D){const d=D[k];if(d.s==='req'&&d.by!==UID&&(d.a===UID||d.b===UID)&&!seenReq.has(k)){seenReq.add(k);toast(`🤝 ${nickOf(d.by)}이(가) 동맹을 제안했어요`);notifyDip()}}refreshPanels()}
+function notifyDip(){const b=$('#bDip');b.style.boxShadow='0 0 0 2px #ffd75e inset';setTimeout(()=>b.style.boxShadow='',4000)}
+function onPlayers(){if(P[UID]){$('#meNm').textContent=P[UID].nick;$('#meAv').textContent=P[UID].av;document.documentElement.style.setProperty('--pc',P[UID].col)}}
+
+/* ===== render ===== */
+let krDirty=true,krLast=0,flab=[],flabT=-1e9;
+function factionLabels(){const by={};for(let i=0;i<NR;i++){const o=rs(i).o;if(o)(by[o]=by[o]||[]).push(i)}const out=[];
+ for(const u in by){const list=by[u],set=new Set(list),seen=new Set();let best=null,ba=-1;
+  for(const i of list){if(seen.has(i))continue;const comp=[],st=[i];seen.add(i);while(st.length){const x=st.pop();comp.push(x);for(const j of REG[x].adj)if(set.has(j)&&!seen.has(j)&&!REG[x].sea.has(j)){seen.add(j);st.push(j)}}
+   const ar=comp.reduce((q,x)=>q+REG[x].area,0);if(ar>ba){ba=ar;best=comp}}
+  let cx=0,cy=0;for(const x of best){cx+=REG[x].lx*REG[x].area;cy+=REG[x].ly*REG[x].area}cx/=ba;cy/=ba;let bi=best[0],bd=1e18;for(const x of best){const d=(REG[x].lx-cx)**2+(REG[x].ly-cy)**2;if(d<bd){bd=d;bi=x}}
+  out.push({u,n:list.length,x:REG[bi].lx,y:REG[bi].ly})}return out}
+function rgb(h){const n=parseInt(String(h).slice(1),16)||0;return[n>>16,n>>8&255,n&255]}
+function rgba(h,a){const c=rgb(h);return`rgba(${c[0]},${c[1]},${c[2]},${a})`}
+function renderKR(){if(!NK)return;const d=krImg.data,N=KGW*KGH;const cols=[];const tg=new Int8Array(NK);
+ for(let r=0;r<NK;r++){const o=rs(r).o;cols[r]=o?rgb(colOf(o)):null}
+ if(sel>=0&&sel<NK&&phase==='play')for(const j of REG[sel].adj)if(j<NK)tg[j]=rs(j).o===UID?2:1;
+ for(let i=0;i<N;i++){const id=kid[i],p=i*4;if(id<0){d[p+3]=0;continue}const ds=kdist[i],c=cols[id],isSel=id===sel||id===insp||id===tgt||id===pickCand;let r,g,b,a;
+  if(c){const k=Math.max(0,1-ds/6);r=c[0];g=c[1];b=c[2];a=.36+.34*k*k;if(ds<1.2){const w=kpb[i]?.75:.45;r=r*(1-w)+255*w;g=g*(1-w)+255*w;b=b*(1-w)+255*w;a=.95}}
+  else{r=255;g=255;b=255;a=ds<1.2?(kpb[i]?.85:.55):0}
+  if(tg[id]&&ds>=1.2){const k=Math.max(0,1-ds/7);if(tg[id]===1){r=c?r*.5+127:255;g=c?g*.5+30:70;b=c?b*.5+30:70;a=Math.max(a,.2+.3*k)}else{a=Math.max(a,.25)}}
+  if(tg[id]&&ds<1.2){r=255;g=tg[id]===1?90:200;b=tg[id]===1?90:255;a=1}
+  if(isSel){if(ds<2.2){r=255;g=255;b=id===tgt?120:255;a=1}else if(!c){r=255;g=255;b=255;a=Math.max(a,.18)}else a=Math.min(1,a+.15)}
+  d[p]=r>255?255:r;d[p+1]=g>255?255:g;d[p+2]=b>255?255:b;d[p+3]=a*255}
+ krCtx.putImageData(krImg,0,0)}
+function drawKR(s,tm,sx0,sy0,sx1,sy1){const pulse=.5+.5*Math.sin(tm/260),vis=[];
+ for(let i=0;i<NK;i++){const c=REG[i];if(!c.vp||c.empty||c.bb[2]<sx0||c.bb[0]>sx1||c.bb[3]<sy0||c.bb[1]>sy1)continue;vis.push(i)}
+ const adj=sel>=0&&phase==='play'?new Set(REG[sel].adj):null;
+ for(const i of vis){const c=REG[i],o=rs(i).o;
+  if(o){ctx.fillStyle=rgba(colOf(o),i===sel?.62:.44);ctx.fill(c.vp,'evenodd')}
+  if(adj&&adj.has(i)){ctx.fillStyle=rs(i).o===UID?'rgba(120,190,255,.22)':`rgba(255,55,55,${.14+.14*pulse})`;ctx.fill(c.vp,'evenodd')}
+  if((i===pickCand||i===insp)&&!o){ctx.fillStyle='rgba(255,255,255,.2)';ctx.fill(c.vp,'evenodd')}}
+ ctx.lineJoin='round';ctx.strokeStyle='rgba(235,242,255,.42)';ctx.lineWidth=1/s;for(const i of vis)ctx.stroke(REG[i].vp);
+ for(const i of vis){const o=rs(i).o;if(!o)continue;const col=colOf(o);ctx.strokeStyle=rgba(col,.38);ctx.lineWidth=5/s;ctx.stroke(REG[i].vp);ctx.strokeStyle=rgba(col,1);ctx.lineWidth=1.5/s;ctx.stroke(REG[i].vp)}
+ ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1.7/s;for(const P of provVP)ctx.stroke(P);
+ if(adj){ctx.setLineDash([6/s,4/s]);for(const j of adj){if(j>=NK||REG[j].empty||rs(j).o===UID)continue;ctx.strokeStyle=`rgba(255,${80+70*pulse|0},80,1)`;ctx.lineWidth=2.4/s;ctx.stroke(REG[j].vp)}ctx.setLineDash([])}
+ if(sel>=0&&sel<NK){ctx.strokeStyle=`rgba(255,255,255,${.75+.25*pulse})`;ctx.lineWidth=3.2/s;ctx.stroke(REG[sel].vp)}
+ if(tgt>=0&&tgt<NK){ctx.strokeStyle='#ffd75e';ctx.lineWidth=3.4/s;ctx.stroke(REG[tgt].vp)}
+ if(insp>=0&&insp<NK&&insp!==sel&&insp!==tgt){ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=2.2/s;ctx.stroke(REG[insp].vp)}
+ if(pickCand>=0&&pickCand<NK){ctx.strokeStyle='#ffd75e';ctx.lineWidth=3/s;ctx.stroke(REG[pickCand].vp)}}
+function qpt(a,b,t,sea){const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,dx=b[0]-a[0],dy=b[1]-a[1],k=sea?.28:.18;const cx=mx-dy*k,cy=my+dx*k,u=1-t;return[u*u*a[0]+2*u*t*cx+t*t*b[0],u*u*a[1]+2*u*t*cy+t*t*b[1]]}
+function render(tm){
+ const s=cam.s,sx0=-cam.x/s,sy0=-cam.y/s,sx1=sx0+VW/s,sy1=sy0+VH/s,T=now();
+ ctx.setTransform(DPR,0,0,DPR,0,0);ctx.fillStyle='#04101f';ctx.fillRect(0,0,VW,VH);
+ ctx.save();ctx.translate(cam.x,cam.y);ctx.scale(s,s);
+ ctx.fillStyle='#061a30';ctx.fillRect(0,0,WW,WH);
+ ctx.strokeStyle='rgba(120,170,255,.07)';ctx.lineWidth=1/s;ctx.beginPath();for(let lon=-180;lon<=180;lon+=15){const x=proj(lon,0)[0];ctx.moveTo(x,0);ctx.lineTo(x,WH)}for(let lat=-60;lat<=80;lat+=15){const y=proj(0,lat)[1];ctx.moveTo(0,y);ctx.lineTo(WW,y)}ctx.stroke();
+ ctx.strokeStyle='rgba(80,170,255,.18)';ctx.lineWidth=4/s;ctx.stroke(landPath);
+ ctx.imageSmoothingEnabled=true;ctx.drawImage(landTex,0,0,WW,WH);if(krTerr&&KX0+KGW/RS>sx0&&KX0<sx1&&KY0+KGH/RS>sy0&&KY0<sy1)ctx.drawImage(krTerr,KX0,KY0,KGW/RS,KGH/RS);const nz=clamp(1-(s/fitS-2.5)/5,0,1);if(nz>0){ctx.globalAlpha=nz;ctx.drawImage(nightTex,0,0,WW,WH);ctx.globalAlpha=1}
+ ctx.globalCompositeOperation='lighter';const lsz=Math.max(.04,1.7/s);
+ if(nz>0)for(const L of lights){if(L.n<.15||L.x<sx0||L.x>sx1||L.y<sy0||L.y>sy1)continue;ctx.globalAlpha=L.n*L.a*.9*nz;ctx.fillStyle=L.r>1?'#ffd890':'#ffb75a';const z=lsz*L.r;ctx.fillRect(L.x-z/2,L.y-z/2,z,z)}
+ ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+ const pulse=.5+.5*Math.sin(tm/260);
+ for(let i=NK;i<NR;i++){const c=REG[i],b=c.bb;if(b[2]<sx0||b[0]>sx1||b[3]<sy0||b[1]>sy1)continue;const o=rs(i).o;
+  if(o){const col=colOf(o);ctx.fillStyle=rgba(col,i===sel?.55:.38);ctx.fill(c.path,'evenodd');ctx.strokeStyle=rgba(col,.35);ctx.lineWidth=5/s;ctx.stroke(c.path);ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.2/s;ctx.stroke(c.path)}
+  else{ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=.8/s;ctx.stroke(c.path)}
+  if(sel>=0&&i!==sel&&REG[sel].adj.includes(i)&&phase==='play'){ctx.fillStyle=rs(i).o===UID?'rgba(120,180,255,.18)':'rgba(255,70,70,.22)';ctx.fill(c.path,'evenodd')}}
+ if(NK)drawKR(s,tm,sx0,sy0,sx1,sy1);
+ if(sel>=0){const c=REG[sel];for(const j of c.adj){const t=REG[j];if(t.kind==='c'){ctx.setLineDash([5/s,4/s]);ctx.strokeStyle=rs(j).o===UID?'rgba(140,200,255,.9)':`rgba(255,${120+80*pulse|0},120,.95)`;ctx.lineWidth=1.6/s;ctx.stroke(t.path)}
+   ctx.setLineDash(c.sea.has(j)?[3/s,4/s]:[]);ctx.strokeStyle=c.sea.has(j)?'rgba(90,190,255,.6)':'rgba(255,255,255,.4)';ctx.lineWidth=1.2/s;ctx.beginPath();ctx.moveTo(c.lx,c.ly);ctx.lineTo(t.lx,t.ly);ctx.stroke()}
+  ctx.setLineDash([]);if(c.kind==='c'){ctx.strokeStyle=`rgba(255,255,255,${.6+.4*pulse})`;ctx.lineWidth=2.4/s;ctx.stroke(c.path)}}
+ if(insp>=0&&insp!==sel&&REG[insp].kind==='c'){ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1.8/s;ctx.stroke(REG[insp].path)}
+ ctx.restore();
+ // armies
+ const targets=new Set();
+ for(const p of fx){const q=W2S(p.x,p.y);if(p.ft){const a_=clamp(p.l/.6,0,1),yy=q[1]-30-(2.4-p.l)*14;ctx.font='900 17px sans-serif';ctx.lineWidth=4;ctx.strokeStyle=`rgba(0,0,0,${a_*.85})`;ctx.globalAlpha=a_;ctx.strokeText(p.ft,q[0],yy);ctx.fillStyle=p.c;ctx.fillText(p.ft,q[0],yy);ctx.globalAlpha=1;continue}if(p.ring){const r=(1-p.l)*46;ctx.strokeStyle=rgba(p.c,Math.max(0,p.l));ctx.lineWidth=3;ctx.beginPath();ctx.arc(q[0],q[1],r,0,6.29);ctx.stroke()}
+  else{const ox=(p.ox||0),oy=(p.oy||0);ctx.globalAlpha=Math.max(0,p.l);ctx.fillStyle=p.c;ctx.fillRect(q[0]+ox-2,q[1]+oy-2,4,4);ctx.globalAlpha=1}}
+ // labels
+ const fs=clamp(10+Math.log2(s/fitS+1)*.8,10,14);ctx.textAlign='center';ctx.textBaseline='middle';const placed=[];
+ const coll=(bx,by,w,h)=>placed.some(q=>bx<q[0]+q[2]&&bx+w>q[0]&&by<q[1]+q[3]&&by+h>q[1]);
+ if(tm-flabT>900){flab=factionLabels();flabT=tm}
+ for(const L of flab){const p=W2S(L.x,L.y);if(p[0]<-150||p[0]>VW+150||p[1]<-40||p[1]>VH+40)continue;const col=colOf(L.u),nm=nickOf(L.u),big=L.u===UID?15:14;
+  ctx.font=`900 ${big}px sans-serif`;const w1=ctx.measureText(nm).width;ctx.font='600 11px sans-serif';const w2=ctx.measureText(L.n+'칸').width;const zin=REG.find(r=>r.lx===L.x&&r.ly===L.y);const zi=zin?REG.indexOf(zin):-1;const up=zin&&(zin.w*s>46||zi===sel||zi===insp||zi===tgt)?62:18;const W_=w1+w2+48,H_=30,bx=p[0]-W_/2,by=p[1]-H_/2-up;
+  if(coll(bx,by,W_,H_))continue;placed.push([bx,by,W_,H_]);
+  ctx.fillStyle='rgba(8,10,16,.82)';rr(bx,by,W_,H_,H_/2);ctx.fill();ctx.strokeStyle=rgba(col,.9);ctx.lineWidth=2;ctx.stroke();ctx.strokeStyle=rgba(col,.3);ctx.lineWidth=6;ctx.stroke();
+  ctx.font='18px sans-serif';ctx.fillText(avOf(L.u),bx+17,by+H_/2+1);ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font=`900 ${big}px sans-serif`;ctx.fillText(nm,bx+32,by+H_/2+1);
+  ctx.fillStyle='rgba(220,226,240,.75)';ctx.font='600 11px sans-serif';ctx.fillText(L.n+'칸',bx+36+w1,by+H_/2+1);ctx.textAlign='center'}
+ const cand=[];
+ for(let i=0;i<NR;i++){const c=REG[i];if(c.empty)continue;const p=W2S(c.lx,c.ly);if(p[0]<-60||p[0]>VW+60||p[1]<-30||p[1]>VH+30)continue;
+  const o=rs(i).o,wpx=c.w*s,near=sel>=0&&REG[sel].adj.includes(i);const forced=i===sel||i===insp||i===tgt||i===pickCand;
+  const show=(c.kind==='k'?wpx>46:(o?wpx>20:wpx>46))||forced||near;if(!show)continue;
+  const pr=(forced?1e6:0)+(near?5e5:0)+(o===UID?2e5:0)+(o?1e5:0)+(c.kind==='k'?c.tier*1e3:0)+wpx;cand.push([pr,i,p,o,wpx,near,forced])}
+ cand.sort((a,b)=>b[0]-a[0]);
+ for(const [pr,i,p,o,wpx,near,forced] of cand){const c=REG[i];const badge=forced||near||(o&&wpx>60)||(!o&&wpx>110);
+  ctx.font=`800 ${fs}px sans-serif`;const w=Math.max(ctx.measureText(c.name).width,badge?fs*4.4:0)+6,h=badge?fs*2.6:fs*1.3,bx=p[0]-w/2,by=p[1]-(badge?fs*1.4:fs*.65);
+  if(!forced&&coll(bx,by,w,h))continue;placed.push([bx,by,w,h]);const isCap=o&&capOfPlayer(o)===c.key;
+  if(isCap){ctx.font=`${fs+6}px sans-serif`;ctx.fillText('🏛️',p[0],p[1]-fs-14)}
+  ctx.font=`800 ${fs}px sans-serif`;ctx.lineWidth=3.5;ctx.strokeStyle='rgba(0,0,0,.85)';ctx.strokeText(c.name,p[0],p[1]-(badge?7:0));ctx.fillStyle='#fff';ctx.fillText(c.name,p[0],p[1]-(badge?7:0));
+  const d=rs(i);if(badge)pill(p[0],p[1]+fs*.72,'⚔ '+fmt(troopsOf(i,T))+(d.f?' 🛡'+d.f:''),o?colOf(o):'rgba(150,160,180,.8)',fs-2);
+  if(o===UID&&d.bk&&d.be>T)pill(p[0],p[1]+fs*(badge?2.2:1.2),'🏗️ '+(d.bk==='pl'?'병영':'경제')+' '+tstr((d.be-T)/1000),'#ffd75e',fs-3)}
+ if(NK&&s<RS*.12){const p=W2S(KX0+KGW/RS/2,KY0+KGH/RS/2);if(s<fitS*2.2&&!flab.length){ctx.font='800 11px sans-serif';ctx.fillStyle='#fff';ctx.strokeStyle='rgba(0,0,0,.8)';ctx.lineWidth=3;ctx.strokeText('대한민국',p[0],p[1]);ctx.fillText('대한민국',p[0],p[1])}}
+ for(const id in A){const a=A[id];const fi=KEYIDX.get(a.fr),ti=KEYIDX.get(a.to);if(fi===undefined||ti===undefined)continue;if(rs(ti).o!==a.o)targets.add(ti);drawArmy(a,fi,ti,T,tm)}
+ if(tgt>=0&&phase==='play'){const p=W2S(REG[tgt].lx,REG[tgt].ly),r=24+3*Math.sin(tm/150);ctx.strokeStyle='rgba(255,215,94,.95)';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(p[0],p[1],r,0,6.29);ctx.stroke();ctx.font='800 11px sans-serif';ctx.fillStyle='#ffd75e';ctx.fillText('공격 목표',p[0],p[1]+r+10)}
+ for(const t of targets){const p=W2S(REG[t].lx,REG[t].ly),r=20,a=tm/500;ctx.save();ctx.translate(p[0],p[1]);ctx.rotate(a);ctx.strokeStyle='rgba(255,60,60,.95)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,r,0,6.29);ctx.stroke();ctx.beginPath();ctx.arc(0,0,r*.45,0,6.29);ctx.stroke();for(let k=0;k<4;k++){ctx.rotate(Math.PI/2);ctx.beginPath();ctx.moveTo(r*.6,0);ctx.lineTo(r*1.35,0);ctx.stroke()}ctx.restore()}
+ if(phase==='pick'){ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(0,TOPH,VW,32);ctx.fillStyle='#fff';ctx.font='800 13px sans-serif';ctx.fillText('📍 세계 어디든 시작할 곳을 탭하세요 · 두 손가락으로 확대 · 위 검색창으로 찾기',VW/2,TOPH+16)}
+}
+function drawTank(x,y,ang,col,z){ctx.save();ctx.translate(x,y);ctx.rotate(ang);ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(-z*.9+2,-z*.62+2,z*1.9,z*1.24);
+ ctx.fillStyle='#20262b';ctx.fillRect(-z*.95,-z*.66,z*1.9,z*.36);ctx.fillRect(-z*.95,z*.3,z*1.9,z*.36);ctx.fillStyle='#3a4148';for(let k=-3;k<=3;k++){ctx.fillRect(k*z*.26-1,-z*.66,1.2,z*.36);ctx.fillRect(k*z*.26-1,z*.3,1.2,z*.36)}
+ ctx.fillStyle=col;ctx.strokeStyle='rgba(0,0,0,.7)';ctx.lineWidth=1;rrp(-z*.8,-z*.4,z*1.6,z*.8,z*.15);ctx.fill();ctx.stroke();
+ ctx.fillStyle='rgba(255,255,255,.25)';ctx.fillRect(-z*.7,-z*.32,z*1.3,z*.14);ctx.fillStyle='#2b3138';ctx.fillRect(z*.05,-z*.07,z*1.25,z*.14);
+ ctx.fillStyle=col;ctx.beginPath();ctx.arc(-z*.05,0,z*.36,0,6.29);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(255,255,255,.35)';ctx.beginPath();ctx.arc(-z*.12,-z*.1,z*.12,0,6.29);ctx.fill();ctx.restore()}
+function drawSquad(x,y,ang,col,z,t){ctx.save();ctx.translate(x,y);ctx.rotate(ang);const pos=[[0,0],[-z*.75,-z*.55],[-z*.75,z*.55],[-z*1.45,0]];
+ pos.forEach((q,k)=>{const bob=Math.sin(t/90+k*1.7)*z*.08;ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(q[0]+1.5,q[1]+1.5+bob,z*.32,z*.26,0,0,6.29);ctx.fill();
+  ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(q[0],q[1]+bob,z*.3,z*.24,0,0,6.29);ctx.fill();ctx.fillStyle='#4a5a2c';ctx.strokeStyle='rgba(0,0,0,.6)';ctx.lineWidth=.8;ctx.beginPath();ctx.arc(q[0]+z*.05,q[1]+bob,z*.19,0,6.29);ctx.fill();ctx.stroke();
+  ctx.strokeStyle='#1d2124';ctx.lineWidth=Math.max(1,z*.08);ctx.beginPath();ctx.moveTo(q[0],q[1]+bob+z*.18);ctx.lineTo(q[0]+z*.45,q[1]+bob+z*.2);ctx.stroke()});ctx.restore()}
+function drawShip(x,y,ang,col,z,t){ctx.save();ctx.translate(x,y);ctx.rotate(ang);ctx.strokeStyle='rgba(220,240,255,.55)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(-z*1.1,-z*.3);ctx.lineTo(-z*2.6,-z*.9);ctx.moveTo(-z*1.1,z*.3);ctx.lineTo(-z*2.6,z*.9);ctx.stroke();
+ ctx.fillStyle=col;ctx.strokeStyle='rgba(0,0,0,.7)';ctx.beginPath();ctx.moveTo(z*1.3,0);ctx.lineTo(z*.5,-z*.45);ctx.lineTo(-z*1.1,-z*.42);ctx.lineTo(-z*1.1,z*.42);ctx.lineTo(z*.5,z*.45);ctx.closePath();ctx.fill();ctx.stroke();
+ ctx.fillStyle='#d9dee5';ctx.fillRect(-z*.5,-z*.22,z*.7,z*.44);ctx.fillStyle='#2b3138';ctx.fillRect(z*.3,-z*.05,z*.7,z*.1);ctx.restore()}
+function rrp(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function drawArmy(a,fi,ti,T,tm){const p=clamp((T-a.st)/(a.dur*1000),0,1);const A_=W2S(REG[fi].lx,REG[fi].ly),B=W2S(REG[ti].lx,REG[ti].ly),col=colOf(a.o);
+ const pts=[],cum=[0];for(let k=0;k<=40;k++){pts.push(qpt(A_,B,k/40,a.sea));if(k)cum.push(cum[k-1]+Math.hypot(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1]))}const L=cum[40]||1;
+ const at=dd=>{dd=clamp(dd,0,L);let k=1;while(k<40&&cum[k]<dd)k++;const t=(dd-cum[k-1])/((cum[k]-cum[k-1])||1),P=pts[k-1],Q=pts[k];return[P[0]+(Q[0]-P[0])*t,P[1]+(Q[1]-P[1])*t,Math.atan2(Q[1]-P[1],Q[0]-P[0])]};
+ const hd=p*L;ctx.lineCap='round';ctx.lineJoin='round';
+ ctx.setLineDash([4,7]);ctx.strokeStyle=rgba(col,.45);ctx.lineWidth=2;ctx.beginPath();pts.forEach((q,k)=>k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.stroke();ctx.setLineDash([]);
+ const e=at(L);ctx.fillStyle=rgba(col,.8);ctx.save();ctx.translate(e[0],e[1]);ctx.rotate(e[2]);ctx.beginPath();ctx.moveTo(4,0);ctx.lineTo(-10,-8);ctx.lineTo(-7,0);ctx.lineTo(-10,8);ctx.closePath();ctx.fill();ctx.restore();
+ ctx.beginPath();let k=0;for(;k<=40&&cum[k]<=hd;k++)k?ctx.lineTo(pts[k][0],pts[k][1]):ctx.moveTo(pts[k][0],pts[k][1]);const h=at(hd);ctx.lineTo(h[0],h[1]);
+ ctx.strokeStyle=rgba(col,.22);ctx.lineWidth=14;ctx.stroke();ctx.strokeStyle=rgba(col,.75);ctx.lineWidth=5;ctx.stroke();ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=1.6;ctx.stroke();
+ const z=clamp(4+Math.log2(cam.s/fitS+1)*1.7,7,14);const nt=a.sea?clamp(Math.round(a.a/900),1,4):clamp(Math.round(a.a/900),1,3),ns=a.sea?0:clamp(Math.round(a.a/600),1,4);
+ const units=[];for(let q=0;q<nt;q++)units.push(a.sea?'s':'t');for(let q=0;q<ns;q++)units.splice(Math.min(units.length,1+q*2),0,'i');
+ let off=0;units.forEach(u=>{const dd=hd-off;off+=u==='i'?z*2.4:z*2.6;if(dd<0)return;const q=at(dd);
+  if(u==='t'){for(let m=1;m<=3;m++){const bq=at(dd-z*1.2-m*z*.7);ctx.fillStyle=`rgba(190,170,130,${.22/m})`;ctx.beginPath();ctx.arc(bq[0]+Math.sin(tm/120+m)*2,bq[1],z*(.35+m*.15),0,6.29);ctx.fill()}drawTank(q[0],q[1],q[2],col,z)}
+  else if(u==='s')drawShip(q[0],q[1],q[2],col,z,tm);else drawSquad(q[0],q[1],q[2],col,z*.95,tm)});
+ const lead=at(hd);pill(lead[0],lead[1]-z-14,(a.sea?'⚓ ':'⚔ ')+fmt(a.a)+' · '+nickOf(a.o),col,11)}
+function pill(x,y,t,col,f){ctx.font=`700 ${f}px sans-serif`;const w=ctx.measureText(t).width+12,h=f+7;ctx.fillStyle='rgba(4,8,18,.78)';rr(x-w/2,y-h/2,w,h,h/2);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=1.2;ctx.stroke();ctx.fillStyle='#fff';ctx.fillText(t,x,y+.5)}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+
+/* ===== UI ===== */
+let ltab='mine',rtab='battle',chTab='all';const tstr=t=>String(Math.floor(t/60)).padStart(2,'0')+':'+String(Math.floor(t%60)).padStart(2,'0');
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200)}
+function renderLog(){const el=$('#clog');const items=[];
+ if(chTab!=='sys')for(const c of CHATS){if(chTab==='ally'&&c.ch!=='ally')continue;if(c.ch==='ally'&&c.u!==UID&&!isAlly(c.u))continue;items.push([c.ts,`<b style="color:${esc(c.c)}">${c.ch==='ally'?'[동맹] ':''}${esc(c.n)}</b> : ${esc(c.x)}`])}
+ if(chTab!=='ally')for(const l of LOGS)items.push([l.ts,`<span style="color:${esc(l.c||'#cfe0ff')}">⚔ ${esc(l.x)}</span>`]);
+ items.sort((a,b)=>a[0]-b[0]);el.innerHTML=items.slice(-40).map(x=>`<div>${x[1]}</div>`).join('')||'<div class="hint">아직 메시지가 없어요</div>';el.scrollTop=1e6}
+function placeTog(){const lo=$('#lp').classList.contains('off'),ro=$('#rp').classList.contains('off');$('#lt').textContent=lo?'▶':'◀';$('#rt').textContent=ro?'◀':'▶';$('#rt').style.right=ro?'0':''}
+function openRight(){$('#rp').classList.remove('off');placeTog()}
+$('#lt').onclick=()=>{$('#lp').classList.toggle('off');placeTog();refreshPanels()};$('#rt').onclick=()=>{$('#rp').classList.toggle('off');placeTog()};
+$$('[data-lt]').forEach(b=>b.onclick=()=>{ltab=b.dataset.lt;$$('[data-lt]').forEach(x=>x.classList.toggle('on',x===b));refreshPanels()});
+$$('[data-rt]').forEach(b=>b.onclick=()=>{rtab=b.dataset.rt;$$('[data-rt]').forEach(x=>x.classList.toggle('on',x===b));refreshPanels()});
+$$('[data-ch]').forEach(b=>b.onclick=()=>{chTab=b.dataset.ch;$$('[data-ch]').forEach(x=>x.classList.toggle('on',x===b));$('#chat').classList.remove('min');renderLog()});
+$('#chMin').onclick=()=>{$('#chat').classList.toggle('min');$('#chMin').textContent=$('#chat').classList.contains('min')?'▴':'▾';renderLog()};
+$$('[data-r]').forEach(b=>b.onclick=()=>{ratio=+b.dataset.r;$$('[data-r]').forEach(x=>x.classList.toggle('on',x===b));renderAct()});
+$('#bWorld').onclick=()=>fitWorld(true);$('#bKorea').onclick=()=>fitKorea(true);
+$('#bHome').onclick=()=>{const c=KEYIDX.get(capOfPlayer(UID));if(c!==undefined){sel=c;insp=c;krDirty=true;focus(c);refreshPanels()}};
+$('#bDip').onclick=()=>{openRight();rtab='dip';$$('[data-rt]').forEach(x=>x.classList.toggle('on',x.dataset.rt==='dip'));refreshPanels()};
+$('#bRecruit').onclick=recruit;$('#bAtk').onclick=doAttack;$('#bFort').onclick=fortify;
+function players(){return Object.keys(P).filter(u=>P[u]&&P[u].nick)}
+function power(u){let t=0,n=0,p=0;const T=now();for(let i=0;i<NR;i++)if(rs(i).o===u){t+=troopsOf(i,T);n++;p+=prodOf(i,u)}for(const id in A)if(A[id].o===u)t+=A[id].a;return{t,n,p}}
+function selBox(){const i=insp>=0?insp:sel,el=$('#selbox');
+ if(i<0){el.innerHTML=`<div class="hint">🗺 지도에서 지역을 탭하세요.<br>내 영토 선택 → 맞닿은 지역 탭 = <b>공격/이동</b></div>`;return}
+ const c=REG[i],d=rs(i),o=d.o,col=colOf(o),land=c.adj.filter(j=>!c.sea.has(j)).length,sea=c.adj.length-land;
+ let h=`<h3><span style="color:${col}">■</span>${esc(c.name)}${o&&capOfPlayer(o)===c.key?' 👑':''}</h3><div class="hint" style="font-size:11px">${esc(c.kind==='k'?c.full:'국가')}</div><div class="own" style="color:${col}">${o?esc(avOf(o)+' '+nickOf(o))+(o===UID?' (나)':isAlly(o)?' <span class="badge b-ally">동맹</span>':' <span class="badge b-war">적대</span>')+(isOnline(o)?' <span class="pl-on"></span>':''):'🏳 중립 지역'}</div>
+ <div class="kv">병력<b>${fmt(troopsOf(i))}</b></div><div class="kv">요새 · 병영 · 경제<b>Lv.${d.f|0} · Lv.${d.pl|0} · Lv.${d.el|0}</b></div><div class="kv">수입<b>+₩${(o?regIncome(i):0).toFixed(0)}/초</b></div><div class="kv">생산<b>+${(o?prodOf(i,o):c.prod).toFixed(1)}/초</b></div><div class="kv">인접<b>육로 ${land} · 해상 ${sea}</b></div>`;
+ if(o===UID){const allies=players().filter(u=>isAlly(u));h+=`<div class="btns"><button class="blue" onclick="recruit()">🪖 징병</button><button onclick="fortify()">🏰 요새화</button></div>`;
+  if(allies.length&&capOfPlayer(UID)!==c.key)h+=`<div class="btns">${allies.map(u=>`<button onclick="offerSell(${i},'${esc(u)}')">💱 ${esc(nickOf(u))}에게 판매</button>`).join('')}</div>`;
+  if(sel===i)h+=`<div class="hint" style="margin-top:6px">공격할 이웃 지역을 탭한 뒤 ⚔ 공격 버튼을 누르세요</div>`}
+ else if(sel>=0&&REG[sel].adj.includes(i))h+=`<div class="hint" style="margin-top:6px;color:#ffb0b0">⚔ ${esc(REG[sel].name)}에서 ${o&&isAlly(o)?'동맹이라 공격 불가':'공격 가능'}${REG[sel].sea.has(i)?' (해상전 -15%)':''}</div>`;
+ else h+=`<div class="hint" style="margin-top:6px">공격하려면 맞닿은 내 영토를 먼저 선택하세요</div>`;
+ el.innerHTML=h}
+function rBody(){const el=$('#rbody'),T=now();let h='';
+ if(rtab==='battle'){const arr=Object.entries(A).map(([id,a])=>({id,a,ti:KEYIDX.get(a.to),fi:KEYIDX.get(a.fr),left:(a.st+a.dur*1000-T)/1000})).filter(x=>x.ti!==undefined&&x.fi!==undefined);
+  const mine=arr.filter(x=>x.a.o===UID&&rs(x.ti).o!==UID).sort((a,b)=>a.left-b.left)[0],inc=arr.filter(x=>x.a.o!==UID&&rs(x.ti).o===UID).sort((a,b)=>a.left-b.left)[0];
+  const card=(hd,blu,sub,ao,an,dO,dn)=>{const t=an+dn||1,ac=colOf(ao),dc=colOf(dO);return`<div class="battle"><div class="hd ${blu?'blu':''}">${hd}</div><div class="sub">${sub}</div><div class="vs"><div class="s"><div class="av" style="border-color:${ac}">${esc(avOf(ao))}</div><div><b>${esc(nickOf(ao))}</b><br><small>공격자</small></div></div><i>VS</i><div class="s r"><div class="av" style="border-color:${dc}">${esc(avOf(dO))}</div><div><b>${esc(nickOf(dO))}</b><br><small>수비자</small></div></div></div><div class="kv" style="padding:0 10px 4px"><span>${fmt(an)}</span><span>병력</span><span>${fmt(dn)}</span></div><div class="bar2"><i style="width:${an/t*100}%;background:${ac}"></i><i style="width:${dn/t*100}%;background:${dc}"></i></div></div>`};
+  if(mine){const d=rs(mine.ti);h+=card('⚔ 지역 공격 진행 중',false,`${esc(REG[mine.fi].name)} → ${esc(REG[mine.ti].name)} · ${tstr(Math.max(0,mine.left))}${mine.a.sea?' · 해상전':''}`,UID,mine.a.a*(mine.a.sea?.85:1),d.o,troopsOf(mine.ti,T)*(1+.25*(d.f|0)))}
+  if(inc){const d=rs(inc.ti);h+=card('🚨 적 공격 감지',true,`${esc(REG[inc.fi].name)} → ${esc(REG[inc.ti].name)} · ${tstr(Math.max(0,inc.left))}`,inc.a.o,inc.a.a,UID,troopsOf(inc.ti,T)*(1+.25*(d.f|0)))}
+  if(!mine&&!inc&&lastBattle){const b=lastBattle,win=(b.a===UID)===b.won;h+=card(win?'🏆 최근 전투 승리':'💥 최근 전투 패배',win,`${esc(b.from)} → ${esc(b.to)}${b.sea?' · 해상전':''}`,b.a,b.aa,b.d,b.dd)}
+  if(!h)h='<div class="hint" style="padding:8px 0">진행 중인 전투가 없어요. 내 영토를 탭한 뒤 맞닿은 지역을 탭해 공격하세요.</div>';
+  const all=arr.length;h+=`<div class="sec">전장 현황</div><div class="kv">진군 중인 전체 부대<b>${all}개</b></div><div class="kv">내 부대<b>${arr.filter(x=>x.a.o===UID).length}개</b></div><div class="kv">이번 접속 점령<b>${stats.cap}회</b></div><div class="kv">플레이어 수<b>${players().length}명</b></div>`}
+ else if(rtab==='dip'){const ps=players().filter(u=>u!==UID);
+  const offers=Object.entries(O).filter(([id,o])=>o.to===UID&&o.s==='open');
+  if(offers.length){h+='<div class="sec">받은 거래 제안</div>';for(const [id,o] of offers){const i=KEYIDX.get(o.key);if(i===undefined)continue;h+=`<div class="row req" style="flex-wrap:wrap"><span class="t">💱 ${esc(nickOf(o.fr))}: ${esc(REG[i].name)} ₩${fmt(o.p)}</span><button class="green" style="padding:4px 8px;font-size:11px" onclick="acceptOffer('${esc(id)}')">수락</button><button style="padding:4px 8px;font-size:11px" onclick="rejectOffer('${esc(id)}')">거절</button></div>`}}
+  h+=`<div class="sec">플레이어 외교 (${ps.length}명)</div>`;
+  if(!ps.length)h+=`<div class="hint">아직 다른 플레이어가 없어요. 오른쪽 위 공유 메뉴에서 친구를 초대하세요.</div>`;
+  for(const u of ps.sort((a,b)=>power(b).n-power(a).n)){const p=power(u),k=dipKey(UID,u),d=D[k];let btn;
+   if(d&&d.s==='ally')btn=`<span class="badge b-ally">동맹</span><button style="padding:4px 8px;font-size:11px" onclick="dropAlly('${esc(u)}')">파기</button>`;
+   else if(d&&d.s==='req'&&d.by!==UID)btn=`<button class="green" style="padding:4px 8px;font-size:11px" onclick="acceptAlly('${esc(u)}')">수락</button><button style="padding:4px 8px;font-size:11px" onclick="dropAlly('${esc(u)}')">거절</button>`;
+   else if(d&&d.s==='req')btn=`<span class="badge">제안 보냄</span>`;
+   else btn=`<span class="badge b-war">적대</span><button class="green" style="padding:4px 8px;font-size:11px" onclick="proposeAlly('${esc(u)}')">동맹 제안</button>`;
+   h+=`<div class="row ${d&&d.s==='req'&&d.by!==UID?'req':''}" style="flex-wrap:wrap"><div class="av" style="border-color:${colOf(u)};width:28px;height:28px;font-size:16px">${esc(avOf(u))}</div><div class="t"><b style="color:${colOf(u)}">${esc(nickOf(u))}</b> <span class="${isOnline(u)?'pl-on':'pl-off'}"></span><br><small>영토 ${p.n} · 병력 ${fmt(p.t)}</small></div>${btn}</div>`}
+  h+='<div class="hint" style="margin-top:6px">동맹끼리는 공격할 수 없어요. 내 영토를 선택하면 동맹에게 판매 제안을 할 수 있어요.</div>'}
+ else{const p=power(UID),me=P[UID]||{};h=`<div class="row"><div class="av" style="width:44px;height:44px;font-size:26px">${esc(me.av||'🐻')}</div><div class="t"><b style="font-size:15px">${esc(me.nick||'-')}</b><br><small>Lv.${lvl()} · ${NET?'온라인':'오프라인 연습'}</small></div></div>
+  <div class="kv">보유 영토<b>${p.n}개</b></div><div class="kv">총 병력<b>${fmt(p.t)}</b></div><div class="kv">병력 생산<b>+${p.p.toFixed(1)}/초</b></div><div class="kv">자금<b>₩${fmt(myMoney())}</b></div><div class="kv">수입<b>+₩${incomeOf(UID).toFixed(1)}/초</b></div><div class="kv">수도<b>${esc(KEYIDX.get(me.cap)!==undefined?REG[KEYIDX.get(me.cap)].name:'-')}</b></div>
+  <div class="sec">친구 초대</div><div class="hint">${NET?'이 화면 오른쪽 위 공유 메뉴에서 친구 이메일을 <b>편집자</b>로 초대하면 같은 지도에서 함께 싸울 수 있어요.':'지금은 오프라인 연습 모드예요. 저장되지 않고 혼자만 플레이돼요.'}</div>
+  <div class="btns"><button onclick="openStart(false)">✏️ 프로필 수정</button></div>`}
+ el.innerHTML=h}
+function lvl(){return 1+Math.floor(Math.sqrt(power(UID).n*4))}
+function lBody(){const el=$('#lbody');let s='';const T=now();
+ if(ltab==='mine'){const m=myRegions();m.sort((a,b)=>(capOfPlayer(UID)===REG[b].key)-(capOfPlayer(UID)===REG[a].key)||troopsOf(b,T)-troopsOf(a,T));
+  s+=`<div class="sec">내 영토 (총 ${m.length}개)</div>`;for(const i of m){const fr=REG[i].adj.some(j=>rs(j).o!==UID);s+=`<div class="row" onclick="pickRow(${i})"><span class="dot" style="background:${colOf(UID)}"></span><span class="t">${capOfPlayer(UID)===REG[i].key?'👑 ':''}${esc(REG[i].name)}${fr?' <small style="color:#ff9a9a">전선</small>':''}</span><span class="v">${fmt(troopsOf(i,T))}</span></div>`}
+  const nb=new Set();for(const i of m)for(const j of REG[i].adj)if(rs(j).o!==UID)nb.add(j);
+  s+=`<div class="sec">공격 가능 지역 (${nb.size})</div>`;for(const j of [...nb].sort((a,b)=>troopsOf(a,T)-troopsOf(b,T)).slice(0,30)){const o=rs(j).o;s+=`<div class="row" onclick="pickRow(${j})"><span class="dot" style="background:${colOf(o)}"></span><span class="t">${o?'⚔':'🏳'} ${esc(REG[j].name)}${o?' <small>'+esc(nickOf(o))+'</small>':''}</span><span class="v">${fmt(troopsOf(j,T))}</span></div>`}}
+ else{const arr=players().map(u=>({u,p:power(u)})).sort((a,b)=>b.p.n-a.p.n||b.p.t-a.p.t);s+='<div class="sec">플레이어 랭킹 (영토 수)</div>';
+  arr.forEach((r,ix)=>{s+=`<div class="row"><b style="width:18px">${ix+1}</b><span class="dot" style="background:${colOf(r.u)}"></span><span class="t">${esc(avOf(r.u))} ${esc(nickOf(r.u))}${r.u===UID?' (나)':''} <span class="${isOnline(r.u)?'pl-on':'pl-off'}"></span></span><span class="v">${r.p.n}개 · ${fmt(r.p.t)}</span></div>`});if(!arr.length)s+='<div class="hint">아직 플레이어가 없어요</div>'}
+ el.innerHTML=s}
+function pickRow(i){insp=i;if(rs(i).o===UID)sel=i;krDirty=true;focus(i);refreshPanels();if(VW<900){$('#lp').classList.add('off');placeTog()}}
+function refreshPanels(){if(phase==='load')return;selBox();rBody();if(!$('#lp').classList.contains('off'))lBody()}
+function topUI(){$('#money').textContent=fmt(myMoney());$('#inc').textContent='+₩'+incomeOf(UID).toFixed(1)+'/초';if(phase==='play'&&sel>=0)renderAct();$('#troopsAll').textContent=fmt(power(UID).t);const d=new Date();$('#clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');$('#meLv').textContent='Lv.'+lvl()+' · 영토 '+power(UID).n;if(!room)$('#onN').textContent='1'}
+// search
+const sInp=$('#search'),sRes=$('#sres');function hideSearch(){sRes.style.display='none'}
+sInp.addEventListener('input',()=>{const q=sInp.value.trim().toLowerCase();if(!q||!NR)return hideSearch();
+ const m=[];for(let i=0;i<NR&&m.length<10;i++){const c=REG[i];if(c.name.toLowerCase().includes(q)||c.full.toLowerCase().includes(q)||(c.en&&c.en.toLowerCase().includes(q)))m.push(i)}
+ sRes.innerHTML=m.map(i=>`<div data-i="${i}"><span style="color:${colOf(rs(i).o)}">■</span> ${esc(REG[i].name)} <small style="color:#8ea6d6">${esc(REG[i].kind==='k'?REG[i].pname||'':REG[i].en||'')}</small></div>`).join('')||'<div>결과 없음</div>';sRes.style.display='block'});
+sRes.addEventListener('click',e=>{const d=e.target.closest('[data-i]');if(!d)return;const i=+d.dataset.i;hideSearch();sInp.value='';sInp.blur();
+ if(phase==='pick'){focus(i);if(!rs(i).o){pickCand=i;insp=i;krDirty=true;renderPick()}return}insp=i;krDirty=true;focus(i);openRight();refreshPanels()});
+$('#cform').addEventListener('submit',e=>{e.preventDefault();const v=$('#cin').value.trim();if(!v)return;$('#cin').value='';if(!P[UID])return toast('먼저 게임을 시작하세요');if(!canWrite)return toast('관전 모드에서는 채팅할 수 없어요');sayChat(v,chTab==='ally'?'ally':'all')});
+
+/* ===== start flow ===== */
+const AVS=['🐻','🦁','🐺','🦅','🦈','🐗','🐉','🦊'];const PCOLS=['#2f8bff','#ff3b3b','#b04dff','#ffb020','#22d38a','#ff6fb5','#1fd6ff','#f2f5ff','#9dff3b','#ff7a2f'];
+let pAv='🐻',pCol=PCOLS[0];
+function buildStart(){$('#optAv').innerHTML=AVS.map(a=>`<button class="${a===pAv?'on':''}" data-a="${a}">${a}</button>`).join('');
+ $('#optCol').innerHTML=PCOLS.map(c=>`<button class="cs ${c===pCol?'on':''}" data-c="${c}" style="background:${c}"></button>`).join('');
+ $$('#optAv button').forEach(b=>b.onclick=()=>{pAv=b.dataset.a;buildStart()});$$('#optCol button').forEach(b=>b.onclick=()=>{pCol=b.dataset.c;document.documentElement.style.setProperty('--pc',pCol);buildStart()})}
+let restart=false;
+function openStart(isRestart){restart=isRestart;const me=P[UID];if(me){pAv=me.av||pAv;pCol=me.col||pCol;if(!$('#nick').value)$('#nick').value=me.nick||''}buildStart();
+ $('#goPick').textContent=(me&&!isRestart&&myRegions().length)?'💾 프로필 저장':'📍 시작할 동네 고르기';$('#start').classList.remove('hide')}
+$('#goPick').onclick=()=>{const nick=$('#nick').value.trim();if(!nick)return toast('닉네임을 입력하세요');if(!canWrite)return toast('이 지도에 참여할 권한이 없어요. 관전만 가능해요');
+ const me=P[UID];if(me&&myRegions().length&&!restart){savePlayer({nick:nick.slice(0,8),av:pAv,col:pCol});setPresence();$('#start').classList.add('hide');return}
+ pendingProfile={nick:nick.slice(0,8),av:pAv,col:pCol};$('#start').classList.add('hide');phase='pick';sel=-1;insp=-1;pickCand=-1;fitWorld(true);renderPick();toast('세계 어디든 시작할 곳을 탭하세요')};
+let pendingProfile=null;
+function beginAt(i){const pr=pendingProfile||{nick:'플레이어',av:pAv,col:pCol};const old=P[UID];
+ savePlayer(Object.assign({},pr,{cap:REG[i].key,m:old?Math.max(5000,Math.round(old.m||0)):5000,mts:now(),since:old&&old.since||now()}));setRegion(i,UID,1500,0);
+ phase='play';sel=i;insp=i;tgt=-1;pickCand=-1;krDirty=true;focus(i,true);openRight();setPresence();renderAct();writeLog(`${pr.nick}이(가) ${REG[i].full}에 깃발을 꽂았다!`,pr.col);
+ toast('내 영토 선택됨 → 이웃 지역 탭 → ⚔ 공격 버튼!');refreshPanels()}
+
+/* ===== main ===== */
+let last=performance.now(),panelT=0,tickT=0,moneyT=0;
+function loop(tm){const dt=Math.min(.1,(tm-last)/1000);last=tm;
+ if(camAnim){camAnim.t=Math.min(1,camAnim.t+dt*2.2);const e=1-Math.pow(1-camAnim.t,3);cam.x=camAnim.fx+(camAnim.tx-camAnim.fx)*e;cam.y=camAnim.fy+(camAnim.ty-camAnim.fy)*e;cam.s=camAnim.fs+(camAnim.ts-camAnim.fs)*e;if(camAnim.t>=1)camAnim=null}
+ for(let k=fx.length-1;k>=0;k--){const p=fx[k];p.l-=dt;if(p.l<=0)fx.splice(k,1);else if(p.vx!==undefined){p.ox=(p.ox||0)+p.vx*dt;p.oy=(p.oy||0)+p.vy*dt;p.vx*=.94;p.vy*=.94}}
+ tickT-=dt;if(tickT<=0){tickT=.25;if(phase==='play'||phase==='dead')tick()}
+ render(tm);
+ if(phase==='play'){moneyT-=dt;if(moneyT<=0){moneyT=.2;$('#money').textContent=fmt(myMoney())}}
+ panelT-=dt;if(panelT<=0&&phase!=='load'){panelT=.5;topUI();if(phase==='play')refreshPanels()}
+ requestAnimationFrame(loop)}
+addEventListener('resize',()=>{const cx=(VW/2-cam.x)/cam.s,cy=(VH/2-cam.y)/cam.s;resize();if(NR)camTo(cx,cy,cam.s,false)});
+(async function main(){resize();if(VW<900||VH<500)$('#lp').classList.add('off');if(VH<500){$('#chat').classList.add('min');$('#chMin').textContent='▴'}placeTog();
+ const conn=connect();
+ try{const [world,korea]=await Promise.all([loadWorld(),loadAm('southKoreaLow')]);$('#ldmsg').textContent='한국 시·군·구 구역 계산 중…';await new Promise(r=>setTimeout(r,30));
+  await buildWorld(world,korea);REG.forEach((r,i)=>KEYIDX.set(r.key,i));makeLand();$('#ldmsg').textContent='위성 지형 생성 중…';await new Promise(r=>setTimeout(r,20));makeKoreaTerrain();makeLights();makeNight();setInterval(makeNight,30000);
+ }catch(e){console.error(e);$('#ldmsg').innerHTML='지도 데이터를 불러오지 못했어요.<br><small>인터넷 연결을 확인하고 새로고침해 주세요.</small>';return}
+ $('#ldmsg').textContent='전장 서버 연결 중…';await conn;subscribe();
+ await new Promise(r=>{const t0=Date.now();const w=()=>{if(firstSnap||Date.now()-t0>10000)r();else setTimeout(w,100)};w()});
+ if(!firstSnap)toast('서버 응답이 늦어요. 데이터가 오래됐을 수 있어요');
+ await new Promise(r=>setTimeout(r,300));
+ $('#loading').style.display='none';phase='menu';fitKorea(false);refreshPanels();topUI();renderLog();
+ if(P[UID]&&myRegions().length){phase='play';onPlayers();setPresence();const c=KEYIDX.get(P[UID].cap);if(c!==undefined){sel=c;insp=c;focus(c,false)}toast(`돌아오신 걸 환영해요, ${P[UID].nick} 사령관!`);refreshPanels()}
+ else{if(!NET)$('#nick').value='불곰';openStart(!!P[UID])}
+ requestAnimationFrame(loop)})();
+</script>
+
+</body>
+</html>
